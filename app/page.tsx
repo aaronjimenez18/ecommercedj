@@ -57,6 +57,7 @@ function HomePage() {
 
       <div className="wrapper">
         <Hero />
+
         <ProductGrid onCartOpen={() => setCartOpen(true)} />
         <Services onBookingOpen={openBooking} />
         <Blog />

@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg: oklch(15% 0.02 240);
-  --surface: oklch(10% 0.02 240);
-  --fg: oklch(98% 0.01 240);
-  --muted: oklch(40% 0.02 240);
-  --border: oklch(20% 0.02 240);
-  --accent: oklch(60% 0.25 330);
+  --bg: #050505;
+  --surface: #0a0a0a;
+  --fg: #ededed;
+  --muted: #555555;
+  --border: #1a1a1a;
+  --accent: #c006d9;
 
   --font-display: 'Times New Roman', Times, serif;
   --font-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
 
-  --border-width: 1.5px;
+  --border-width: 1px;
   --container-max: 1440px;
 }
 
@@ -31,22 +31,28 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1.2rem 2rem;
   border-bottom: var(--border-width) solid var(--border);
   position: sticky;
   top: 0;
-  background: var(--bg);
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(12px);
   z-index: 1000;
 }
 
 .logo {
   font-family: var(--font-display);
-  font-size: 2.5rem;
-  letter-spacing: -3px;
+  font-size: 2.2rem;
+  letter-spacing: -2px;
   cursor: pointer;
 }
 
@@ -57,28 +63,33 @@ nav ul {
 }
 
 nav a {
-  color: var(--fg);
+  color: var(--muted);
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   transition: color 0.2s;
 }
 
 nav a:hover {
-  color: var(--accent);
+  color: var(--fg);
 }
 
 footer {
-  padding: 6rem 2rem;
+  padding: 5rem 2rem;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1.5fr;
   gap: 4rem;
+  border-top: var(--border-width) solid var(--border);
+  background: var(--surface);
 }
 
 footer h4 {
   text-transform: uppercase;
   margin-bottom: 2rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
 }
 
 footer ul {
@@ -91,21 +102,14 @@ footer ul {
 footer a {
   color: var(--muted);
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
 }
 
 footer a:hover {
-  color: var(--accent);
-}
-
-.hero-visual::after {
-  content: 'GDL';
-  font-family: var(--font-display);
-  font-size: 35vw;
-  opacity: 0.03;
-  position: absolute;
-  pointer-events: none;
+  color: var(--fg);
 }
 
 .wrapper {
@@ -137,30 +141,30 @@ h1, h2, h3 {
   line-height: 0.85;
 }
 
-h1 { font-size: clamp(4rem, 12vw, 10rem); }
-h2 { font-size: clamp(3rem, 8vw, 6rem); }
-h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
+h1 { font-size: clamp(3rem, 10vw, 8rem); letter-spacing: -0.03em; }
+h2 { font-size: clamp(2.5rem, 6vw, 5rem); letter-spacing: -0.02em; }
+h3 { font-size: clamp(1.2rem, 2.5vw, 2rem); }
 
 .kicker {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--accent);
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
   display: block;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
 }
 
 .btn {
   display: inline-block;
-  padding: 1.2rem 2.4rem;
+  padding: 1rem 2rem;
   border: var(--border-width) solid var(--fg);
   background: transparent;
   color: var(--fg);
   text-decoration: none;
   font-family: var(--font-mono);
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
   cursor: pointer;
   transition: 0.2s cubic-bezier(0.23, 1, 0.32, 1);
   text-align: center;
@@ -181,9 +185,19 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
   color: var(--bg);
 }
 
+.btn-amazon {
+  border-color: #fa8b0c !important;
+  color: #fa8b0c !important;
+}
+
+.btn-amazon:hover {
+  background: #fa8b0c !important;
+  color: #000 !important;
+}
+
 .btn-sm {
-  padding: 0.6rem 1.2rem;
-  font-size: 0.7rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.65rem;
 }
 
 .tag {
@@ -201,8 +215,9 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 .filter-nav {
   display: flex;
   gap: 1.5rem;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .filter-nav span {
@@ -212,7 +227,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 }
 
 .filter-nav span.active {
-  color: var(--accent);
+  color: var(--fg);
 }
 
 .filter-nav span:hover {
@@ -228,7 +243,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 .product-card {
   border-right: var(--border-width) solid var(--border);
   border-bottom: var(--border-width) solid var(--border);
-  padding: 2.5rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -261,20 +276,20 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 }
 
 .product-info h3 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
 
 .product-info p {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--muted);
   min-height: 3em;
 }
 
 .price {
   font-family: var(--font-display);
-  font-size: 1.8rem;
-  color: var(--accent);
+  font-size: 1.5rem;
+  color: var(--fg);
 }
 
 .services-split {
@@ -305,14 +320,15 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 }
 
 .service-list li {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  color: var(--muted);
 }
 
 .service-list li::before {
-  content: '✓';
+  content: '→';
   color: var(--accent);
 }
 
@@ -364,20 +380,22 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 }
 
 .faq-q {
-  padding: 2rem 0;
+  padding: 1.5rem 0;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-transform: uppercase;
-  font-size: 1.2rem;
+  font-size: 1rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
 }
 
 .faq-a {
-  padding-bottom: 2rem;
+  padding-bottom: 1.5rem;
   color: var(--muted);
   display: none;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   max-width: 80%;
 }
 
@@ -450,7 +468,11 @@ form input, form select, form textarea {
   margin-bottom: 1rem;
 }
 
-form input:focus { border-color: var(--accent); }
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: var(--accent);
+}
 
 @media (max-width: 1200px) {
   .product-grid { grid-template-columns: repeat(3, 1fr); }
@@ -459,9 +481,8 @@ form input:focus { border-color: var(--accent); }
 }
 
 @media (max-width: 900px) {
-  .hero, .services-split, .blog-grid, footer { grid-template-columns: 1fr; }
+  .services-split, .blog-grid, footer { grid-template-columns: 1fr; }
   .product-grid { grid-template-columns: 1fr 1fr; }
-  .hero-content { border-right: none; border-bottom: var(--border-width) solid var(--border); }
   .service-panel { border-right: none; border-bottom: var(--border-width) solid var(--border); }
   .blog-card { border-right: none; }
   .drawer { width: 100%; right: -100%; }

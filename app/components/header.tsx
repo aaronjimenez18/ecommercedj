@@ -10,11 +10,11 @@ export default function Header({ onCartToggle }: { onCartToggle: () => void }) {
       <div className="logo" onClick={() => window.scrollTo(0, 0)}>GDL.</div>
       <nav>
         <ul>
-          <li><a href="#inicio">Inicio</a></li>
-          <li><a href="#muebles">Muebles</a></li>
-          <li><a href="#servicios">Servicios</a></li>
-          <li><a href="#blog">Blog</a></li>
-          <li><a href="#faq">Preguntas</a></li>
+          <li><a href="#inicio">inicio</a></li>
+          <li><a href="#muebles">catálogo</a></li>
+          <li><a href="#servicios">servicios</a></li>
+          <li><a href="#blog">blog</a></li>
+          <li><a href="#faq">preguntas</a></li>
         </ul>
       </nav>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
@@ -22,7 +22,7 @@ export default function Header({ onCartToggle }: { onCartToggle: () => void }) {
           onClick={onCartToggle}
           className="btn btn-sm"
         >
-          CART <span>{count}</span>
+          carrito <span>{count}</span>
         </button>
       </div>
     </header>

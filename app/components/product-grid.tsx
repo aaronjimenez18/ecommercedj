@@ -59,8 +59,7 @@ export default function ProductGrid({ onCartOpen }: { onCartOpen: () => void }) 
                   href="https://amazon.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-sm"
-                  style={{ borderColor: '#FF9900', color: '#FF9900' }}
+                  className="btn btn-sm btn-amazon"
                 >
                   AMAZON
                 </a>
