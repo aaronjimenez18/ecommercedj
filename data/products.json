@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "name": "Alpha Console",
+    "desc": "Mesa de producción en roble negro con rack de 4U integrado.",
+    "price": 14500,
+    "category": "mesas",
+    "tag": "TOP SELLER",
+    "amazon": true,
+    "img": "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600"
+  },
+  {
+    "id": "2",
+    "name": "Stealth Booth",
+    "desc": "Cabina de DJ plegable ultra-ligera para eventos móviles.",
+    "price": 9200,
+    "category": "cabinas",
+    "tag": null,
+    "amazon": false,
+    "img": "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=600"
+  },
+  {
+    "id": "3",
+    "name": "Pro Risers",
+    "desc": "Soportes aislantes para monitores de estudio de 5-8 pulgadas.",
+    "price": 2800,
+    "category": "accesorios",
+    "tag": null,
+    "amazon": false,
+    "img": "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600"
+  },
+  {
+    "id": "4",
+    "name": "Nexus Desk",
+    "desc": "Escritorio de estudio minimalista con bandeja para teclado MIDI.",
+    "price": 11900,
+    "category": "mesas",
+    "tag": null,
+    "amazon": true,
+    "img": "https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=600"
+  },
+  {
+    "id": "5",
+    "name": "Titan Booth",
+    "desc": "Cabina profesional para clubs con iluminación LED integrada.",
+    "price": 22000,
+    "category": "cabinas",
+    "tag": "PREMIUM",
+    "amazon": false,
+    "img": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=600"
+  },
+  {
+    "id": "6",
+    "name": "Void Stand",
+    "desc": "Soporte de audífonos en acero industrial cortado a láser.",
+    "price": 1450,
+    "category": "accesorios",
+    "tag": null,
+    "amazon": false,
+    "img": "https://images.unsplash.com/photo-1520170350707-b2da59970118?q=80&w=600"
+  },
+  {
+    "id": "7",
+    "name": "Compact Deck",
+    "desc": "Mesa compacta para setups de controlador o vinilos.",
+    "price": 7800,
+    "category": "mesas",
+    "tag": null,
+    "amazon": false,
+    "img": "https://images.unsplash.com/photo-1459749411177-042180ce6742?q=80&w=600"
+  }
+]

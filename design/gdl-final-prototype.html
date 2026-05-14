@@ -1,0 +1,811 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDL | Producción, Música y DJ</title>
+    <style>
+        :root {
+            /* Palette from DESIGN.md */
+            --bg: oklch(15% 0.02 240);
+            --surface: oklch(10% 0.02 240);
+            --fg: oklch(98% 0.01 240);
+            --muted: oklch(40% 0.02 240);
+            --border: oklch(20% 0.02 240);
+            --accent: oklch(60% 0.25 330);
+            
+            --font-display: 'Times New Roman', Times, serif;
+            --font-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
+            
+            --border-width: 1.5px;
+            --container-max: 1440px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            line-height: 1.4;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Global Layout --- */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            border-left: var(--border-width) solid var(--border);
+            border-right: var(--border-width) solid var(--border);
+        }
+
+        section {
+            padding: 5rem 2rem;
+            border-bottom: var(--border-width) solid var(--border);
+            position: relative;
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: var(--border-width) solid var(--border);
+            padding-bottom: 1.5rem;
+        }
+
+        h1, h2, h3 { font-family: var(--font-display); text-transform: uppercase; font-weight: 400; line-height: 0.85; }
+        h1 { font-size: clamp(4rem, 12vw, 10rem); }
+        h2 { font-size: clamp(3rem, 8vw, 6rem); }
+        h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
+
+        .kicker {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
+            letter-spacing: 0.1em;
+        }
+
+        /* --- Buttons & UI --- */
+        .btn {
+            display: inline-block;
+            padding: 1.2rem 2.4rem;
+            border: var(--border-width) solid var(--fg);
+            background: transparent;
+            color: var(--fg);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            text-align: center;
+        }
+        .btn:hover { background: var(--fg); color: var(--bg); }
+        .btn-accent { border-color: var(--accent); color: var(--accent); }
+        .btn-accent:hover { background: var(--accent); color: var(--bg); }
+        .btn-sm { padding: 0.6rem 1.2rem; font-size: 0.7rem; }
+
+        .tag {
+            font-size: 0.6rem;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 3px 8px;
+            text-transform: uppercase;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 2;
+        }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: var(--border-width) solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 1000;
+        }
+        .logo { font-family: var(--font-display); font-size: 2.5rem; letter-spacing: -3px; cursor: pointer; }
+        nav ul { display: flex; list-style: none; gap: 2.5rem; }
+        nav a { color: var(--fg); text-decoration: none; text-transform: uppercase; font-size: 0.75rem; transition: color 0.2s; }
+        nav a:hover { color: var(--accent); }
+
+        /* --- Hero --- */
+        .hero { min-height: 85vh; display: grid; grid-template-columns: 1.2fr 0.8fr; padding: 0; overflow: hidden; }
+        .hero-content { padding: 6rem 3rem; display: flex; flex-direction: column; justify-content: center; border-right: var(--border-width) solid var(--border); }
+        .hero-visual { background: var(--surface); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .hero-visual video, .hero-visual img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; filter: grayscale(1); }
+        .hero-visual::after { content: 'GDL'; font-family: var(--font-display); font-size: 35vw; opacity: 0.03; position: absolute; pointer-events: none; }
+
+        /* --- E-commerce --- */
+        .filter-nav { display: flex; gap: 1.5rem; font-size: 0.7rem; text-transform: uppercase; }
+        .filter-nav span { cursor: pointer; color: var(--muted); transition: color 0.2s; }
+        .filter-nav span.active { color: var(--accent); }
+        .filter-nav span:hover { color: var(--fg); }
+
+        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: var(--border-width) solid var(--border); }
+        .product-card {
+            border-right: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: background 0.4s;
+            position: relative;
+        }
+        .product-card:nth-child(4n) { border-right: none; }
+        .product-card:hover { background: var(--surface); }
+        .product-img { aspect-ratio: 1; background: var(--border); position: relative; overflow: hidden; }
+        .product-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); transition: 0.5s; }
+        .product-card:hover .product-img img { filter: grayscale(0) contrast(1); transform: scale(1.05); }
+        .product-info h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .product-info p { font-size: 0.75rem; color: var(--muted); min-height: 3em; }
+        .price { font-family: var(--font-display); font-size: 1.8rem; color: var(--accent); }
+
+        /* --- Services --- */
+        .services-split { display: grid; grid-template-columns: 1fr 1fr; padding: 0; }
+        .service-panel { padding: 5rem 3rem; border-right: var(--border-width) solid var(--border); display: flex; flex-direction: column; gap: 2rem; position: relative; }
+        .service-panel:last-child { border-right: none; background: var(--surface); }
+        .service-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+        .service-list li { font-size: 0.9rem; display: flex; align-items: center; gap: 0.8rem; }
+        .service-list li::before { content: '✓'; color: var(--accent); }
+
+        /* --- Blog --- */
+        .blog-grid { display: grid; grid-template-columns: 1fr 1fr; border-top: var(--border-width) solid var(--border); }
+        .blog-card { border-right: var(--border-width) solid var(--border); padding: 0; border-bottom: var(--border-width) solid var(--border); }
+        .blog-card:last-child { border-right: none; }
+        .blog-content { padding: 3rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        .blog-img { aspect-ratio: 21/9; background: var(--border); overflow: hidden; }
+        .blog-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .blog-card:hover .blog-img img { transform: scale(1.05); }
+
+        /* --- FAQ Accordion --- */
+        .faq-list { max-width: 900px; margin: 0 auto; }
+        .faq-item { border-bottom: var(--border-width) solid var(--border); }
+        .faq-q { padding: 2rem 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; font-size: 1.2rem; }
+        .faq-a { padding-bottom: 2rem; color: var(--muted); display: none; font-size: 0.95rem; max-width: 80%; }
+        .faq-q span.icon { transition: transform 0.3s; font-family: var(--font-mono); }
+        .faq-item.active .faq-a { display: block; }
+        .faq-item.active .icon { transform: rotate(45deg); color: var(--accent); }
+
+        /* --- Cart & Modals --- */
+        .drawer {
+            position: fixed; right: -450px; top: 0; width: 450px; height: 100vh;
+            background: var(--bg); border-left: var(--border-width) solid var(--border);
+            z-index: 2000; padding: 3rem; transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex; flex-direction: column;
+        }
+        .drawer.active { right: 0; }
+        .modal {
+            position: fixed; inset: 0; z-index: 2100; display: none;
+            align-items: center; justify-content: center; padding: 2rem;
+        }
+        .modal.active { display: flex; }
+        .modal-inner {
+            background: var(--bg); border: var(--border-width) solid var(--border);
+            padding: 4rem; width: 100%; max-width: 700px; position: relative;
+        }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1500; display: none; opacity: 0; transition: opacity 0.3s; }
+        .overlay.active { display: block; opacity: 1; }
+
+        form input, form select, form textarea {
+            width: 100%; background: transparent; border: var(--border-width) solid var(--border);
+            padding: 1.2rem; color: var(--fg); font-family: var(--font-mono); outline: none; margin-bottom: 1rem;
+        }
+        form input:focus { border-color: var(--accent); }
+
+        /* --- Footer --- */
+        footer { padding: 6rem 2rem; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 4rem; }
+        footer h4 { text-transform: uppercase; margin-bottom: 2rem; font-size: 0.9rem; }
+        footer ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+        footer a { color: var(--muted); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; }
+        footer a:hover { color: var(--accent); }
+
+        /* --- WhatsApp --- */
+        .wa-float {
+            position: fixed; bottom: 2rem; right: 2rem; width: 64px; height: 64px;
+            background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s;
+        }
+        .wa-float:hover { transform: scale(1.1) rotate(10deg); }
+
+        /* --- Responsive --- */
+        @media (max-width: 1200px) {
+            .product-grid { grid-template-columns: repeat(3, 1fr); }
+            .product-card:nth-child(3n) { border-right: none; }
+            .product-card:nth-child(4n) { border-right: var(--border-width) solid var(--border); }
+        }
+        @media (max-width: 900px) {
+            .hero, .services-split, .blog-grid, footer { grid-template-columns: 1fr; }
+            .product-grid { grid-template-columns: 1fr 1fr; }
+            .hero-content { border-right: none; border-bottom: var(--border-width) solid var(--border); }
+            .service-panel { border-right: none; border-bottom: var(--border-width) solid var(--border); }
+            .blog-card { border-right: none; }
+            .drawer { width: 100%; right: -100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- Sidebar Cart -->
+<div class="drawer" id="cart-drawer">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: var(--border-width) solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+        <h3 style="font-size: 2.5rem;">CARRITO</h3>
+        <button id="close-cart" style="background:none; border:none; color:var(--fg); cursor:pointer; font-family:var(--font-mono);">[CERRAR]</button>
+    </div>
+    <div id="cart-items" style="flex-grow: 1; overflow-y: auto;">
+        <p style="color: var(--muted); text-align: center; margin-top: 4rem;">Tu carrito está vacío.</p>
+    </div>
+    <div style="border-top: var(--border-width) solid var(--border); padding-top: 2rem; margin-top: 2rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 1.2rem;">
+            <span>TOTAL:</span>
+            <span id="cart-total" class="price">$0.00</span>
+        </div>
+        <button class="btn btn-accent" style="width: 100%;">PROCEDER AL PAGO</button>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal" id="booking-modal">
+    <div class="modal-inner">
+        <button id="close-modal" style="position: absolute; top: 2rem; right: 2rem; background:none; border:none; color:var(--fg); cursor:pointer;">[CERRAR]</button>
+        <span class="kicker" id="modal-service-name">SERVICIO PREMIUM</span>
+        <h2 style="font-size: 3rem; margin-bottom: 2.5rem;">RESERVAR FECHA</h2>
+        
+        <form id="booking-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <input type="text" placeholder="NOMBRE COMPLETO" required style="grid-column: span 2;">
+                <input type="email" placeholder="EMAIL" required>
+                <input type="tel" placeholder="TELÉFONO" required>
+                <input type="date" required id="event-date">
+                <select id="event-type">
+                    <option value="interior">EVENTO INTERIOR</option>
+                    <option value="exterior">EVENTO EXTERIOR</option>
+                </select>
+                <div style="grid-column: span 2; display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <label style="font-size: 0.7rem; color: var(--muted);">DURACIÓN (HORAS):</label>
+                    <input type="number" value="5" min="5" max="12" id="event-hours" style="width: 80px; margin-bottom: 0;">
+                    <span style="font-size: 0.7rem; color: var(--accent);">+ $1,200 POR HORA EXTRA</span>
+                </div>
+            </div>
+            
+            <div style="background: var(--surface); padding: 2rem; border: var(--border-width) solid var(--accent); margin: 1.5rem 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>ESTIMADO TOTAL:</span>
+                    <span class="price" id="calc-total">$7,500</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--accent);">
+                    <span>ANTICIPO REQUERIDO:</span>
+                    <span>$1,500</span>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-accent" style="width: 100%;">PAGAR ANTICIPO Y CONFIRMAR</button>
+        </form>
+    </div>
+</div>
+
+<header>
+    <div class="logo" onclick="window.scrollTo(0,0)">GDL.</div>
+    <nav>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#muebles">Muebles</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <button id="cart-toggle" style="background:none; border:var(--border-width) solid var(--fg); color:var(--fg); padding: 0.5rem 1.2rem; font-family:var(--font-mono); cursor:pointer; text-transform:uppercase; font-size:0.75rem;">
+            CART <span id="cart-count">0</span>
+        </button>
+    </div>
+</header>
+
+<div class="wrapper">
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <span class="kicker">Nightlife • Production • Gear</span>
+            <h1>Música que<br>Se Siente.</h1>
+            <p style="margin: 2.5rem 0; color: var(--muted); max-width: 450px; font-size: 0.95rem;">
+                Plataforma integral para DJ/Productores. Fabricamos muebles especializados y curamos experiencias sonoras inolvidables.
+            </p>
+            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                <a href="#muebles" class="btn btn-accent">Ver Catálogo</a>
+                <a href="#servicios" class="btn">Contratar DJ</a>
+                <a href="https://amazon.com" target="_blank" class="btn" style="border-color: #FF9900; color: #FF9900;">Amazon Store</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <img src="https://images.unsplash.com/photo-1571266028243-e4733b0f0bb1?q=80&w=1200" alt="DJ Set">
+            <div style="position: absolute; bottom: 2rem; left: 2rem; background: var(--accent); color: var(--bg); padding: 0.5rem 1rem; font-size: 0.7rem;">LIVE NOW: CDMX SESSION</div>
+        </div>
+    </section>
+
+    <!-- Muebles & Equipos -->
+    <section id="muebles">
+        <div class="section-header">
+            <div>
+                <span class="kicker">Muebles & Equipos</span>
+                <h2>Catálogo Profesional</h2>
+            </div>
+            <div class="filter-nav">
+                <span class="active" data-filter="all">Todos</span>
+                <span data-filter="mesas">Mesas</span>
+                <span data-filter="cabinas">Cabinas</span>
+                <span data-filter="accesorios">Accesorios</span>
+            </div>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+            <!-- Products will be injected by JS or hardcoded for high-fidelity -->
+            <div class="product-card" data-category="mesas">
+                <span class="tag">TOP SELLER</span>
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600" alt="Alpha 01">
+                </div>
+                <div class="product-info">
+                    <h3>Alpha Console</h3>
+                    <p>Mesa de producción en roble negro con rack de 4U integrado.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$14,500</span>
+                    <button class="btn btn-sm btn-accent add-to-cart" data-id="1" data-name="Alpha Console" data-price="14500">+ CART</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="cabinas">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=600" alt="Stealth Booth">
+                </div>
+                <div class="product-info">
+                    <h3>Stealth Booth</h3>
+                    <p>Cabina de DJ plegable ultra-ligera para eventos móviles.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$9,200</span>
+                    <button class="btn btn-sm btn-accent add-to-cart" data-id="2" data-name="Stealth Booth" data-price="9200">+ CART</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="accesorios">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600" alt="Acoustic Riser">
+                </div>
+                <div class="product-info">
+                    <h3>Pro Risers</h3>
+                    <p>Soportes aislantes para monitores de estudio de 5-8 pulgadas.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$2,800</span>
+                    <button class="btn btn-sm btn-accent add-to-cart" data-id="3" data-name="Pro Risers" data-price="2800">+ CART</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="mesas">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=600" alt="Studio Desk">
+                </div>
+                <div class="product-info">
+                    <h3>Nexus Desk</h3>
+                    <p>Escritorio de estudio minimalista con bandeja para teclado MIDI.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$11,900</span>
+                    <a href="https://amazon.com" target="_blank" class="btn btn-sm" style="border-color: #FF9900; color: #FF9900;">AMAZON</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="cabinas">
+                <span class="tag">PREMIUM</span>
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=600" alt="Club Booth">
+                </div>
+                <div class="product-info">
+                    <h3>Titan Booth</h3>
+                    <p>Cabina profesional para clubs con iluminación LED integrada.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$22,000</span>
+                    <button class="btn btn-sm btn-accent add-to-cart" data-id="5" data-name="Titan Booth" data-price="22000">+ CART</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="accesorios">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1520170350707-b2da59970118?q=80&w=600" alt="Headphone Stand">
+                </div>
+                <div class="product-info">
+                    <h3>Void Stand</h3>
+                    <p>Soporte de audífonos en acero industrial cortado a láser.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$1,450</span>
+                    <button class="btn btn-sm btn-accent add-to-cart" data-id="6" data-name="Void Stand" data-price="1450">+ CART</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="mesas">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1459749411177-042180ce6742?q=80&w=600" alt="DJ Table">
+                </div>
+                <div class="product-info">
+                    <h3>Compact Deck</h3>
+                    <p>Mesa compacta para setups de controlador o vinilos.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$7,800</span>
+                    <button class="btn btn-sm btn-accent add-to-cart" data-id="7" data-name="Compact Deck" data-price="7800">+ CART</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="accesorios">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1543867882-74f07a97262b?q=80&w=600" alt="Laptop Stand">
+                </div>
+                <div class="product-info">
+                    <h3>Apex Riser</h3>
+                    <p>Soporte ergonómico para laptop con ajuste de altura.</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <span class="price">$1,200</span>
+                    <a href="https://amazon.com" target="_blank" class="btn btn-sm" style="border-color: #FF9900; color: #FF9900;">AMAZON</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DJ Services -->
+    <section id="servicios" style="padding: 0;">
+        <div class="services-split">
+            <div class="service-panel">
+                <span class="kicker">Standard Set</span>
+                <h3>Servicio DJ Profesional</h3>
+                <span class="price" style="font-size: 3.5rem;">$5,500 <small style="font-size: 0.8rem; font-family:var(--font-mono);">/ 5H</small></span>
+                <p style="color: var(--muted); line-height: 1.6;">Curaduría musical experta para eventos privados, lanzamientos y corporativos.</p>
+                <ul class="service-list">
+                    <li>DJ con 10+ años de experiencia</li>
+                    <li>Sistema de audio (hasta 100 personas)</li>
+                    <li>Cabina de DJ estética (Brutal Series)</li>
+                    <li>Micrófono inalámbrico profesional</li>
+                </ul>
+                <button class="btn btn-accent open-booking" data-base="5500" data-name="DJ Estándar">Reservar Ahora</button>
+            </div>
+            
+            <div class="service-panel">
+                <span class="tag">RECOMENDADO</span>
+                <span class="kicker">Full Experience</span>
+                <h3>Servicio Premium Gear</h3>
+                <span class="price" style="font-size: 3.5rem;">$7,500 <small style="font-size: 0.8rem; font-family:var(--font-mono);">/ 5H</small></span>
+                <p style="color: var(--muted); line-height: 1.6;">Producción audiovisual completa. Transformamos cualquier espacio en un club de primer nivel.</p>
+                <ul class="service-list">
+                    <li>DJ + Staff de Soporte Técnico</li>
+                    <li>Audio Reforzado (hasta 250 personas)</li>
+                    <li>Diseño de Iluminación Robótica & Láser</li>
+                    <li>Máquina de Humo y Efectos Especiales</li>
+                    <li>Pirotecnia Fría Controlada</li>
+                </ul>
+                <button class="btn btn-accent open-booking" data-base="7500" data-name="Servicio Premium">Mejorar Experiencia</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog -->
+    <section id="blog">
+        <div class="section-header">
+            <div>
+                <span class="kicker">Contenido</span>
+                <h2>Blog Editorial</h2>
+            </div>
+            <div class="filter-nav">
+                <span class="active">Novedades</span>
+                <span>Tutoriales</span>
+                <span>Eventos</span>
+            </div>
+        </div>
+
+        <div class="blog-grid">
+            <article class="blog-card">
+                <div class="blog-img">
+                    <img src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?q=80&w=800" alt="Vinyl">
+                </div>
+                <div class="blog-content">
+                    <span class="kicker" style="font-size: 0.6rem;">Tendencias</span>
+                    <h3>El Renacimiento del Vinilo en el 2026</h3>
+                    <p style="font-size: 0.8rem; color: var(--muted);">Por qué los sets puristas están cobrando más fuerza que nunca en la escena underground.</p>
+                    <button class="btn btn-sm" style="align-self: flex-start;">Leer Más</button>
+                </div>
+            </article>
+
+            <article class="blog-card">
+                <div class="blog-img">
+                    <img src="https://images.unsplash.com/photo-1514525253361-bee8718a34d1?q=80&w=800" alt="Club">
+                </div>
+                <div class="blog-content">
+                    <span class="kicker" style="font-size: 0.6rem;">Producción</span>
+                    <h3>Guía: Acústica para tu Home Studio</h3>
+                    <p style="font-size: 0.8rem; color: var(--muted);">No gastes miles en equipo si tu cuarto no está tratado. Aquí te decimos cómo empezar.</p>
+                    <button class="btn btn-sm" style="align-self: flex-start;">Leer Más</button>
+                </div>
+            </article>
+        </div>
+        
+        <!-- Newsletter sub-section -->
+        <div style="margin-top: 5rem; border: var(--border-width) solid var(--accent); padding: 4rem; text-align: center; background: var(--surface);">
+            <h3 style="margin-bottom: 1rem;">Únete al Collective</h3>
+            <p style="color: var(--muted); margin-bottom: 2.5rem;">Recibe descuentos exclusivos en muebles y guías de producción semanalmente.</p>
+            <form style="display: flex; max-width: 600px; margin: 0 auto; gap: 1rem;">
+                <input type="email" placeholder="TU EMAIL" style="margin-bottom: 0;">
+                <button class="btn btn-accent" style="white-space: nowrap;">Suscribirme</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonios">
+        <div class="section-header">
+            <div>
+                <span class="kicker">Social Proof</span>
+                <h2>Lo que dicen de GDL</h2>
+            </div>
+            <div style="font-size: 0.8rem;">GOOGLE RATING: 5.0 ⭐⭐⭐⭐⭐</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+            <div style="border: var(--border-width) solid var(--border); padding: 3rem;">
+                <div style="color: var(--accent); margin-bottom: 1.5rem;">⭐⭐⭐⭐⭐</div>
+                <p style="font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.2;">"La Alpha Console es una obra de arte. Mi flujo de trabajo mejoró un 200% desde que la instalé."</p>
+                <span style="font-size: 0.7rem; color: var(--muted); text-transform: uppercase;">— Carlos R., Productor</span>
+            </div>
+            <div style="border: var(--border-width) solid var(--border); padding: 3rem;">
+                <div style="color: var(--accent); margin-bottom: 1.5rem;">⭐⭐⭐⭐⭐</div>
+                <p style="font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.2;">"Contratamos el set Premium para nuestra boda corporativa y los invitados no dejaron de bailar. Increíble producción."</p>
+                <span style="font-size: 0.7rem; color: var(--muted); text-transform: uppercase;">— Ana L., Event Planner</span>
+            </div>
+            <div style="border: var(--border-width) solid var(--border); padding: 3rem;">
+                <div style="color: var(--accent); margin-bottom: 1.5rem;">⭐⭐⭐⭐⭐</div>
+                <p style="font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.2;">"El envío a CDMX fue súper rápido y el armado de la mesa fue muy intuitivo. Recomendados al 100%."</p>
+                <span style="font-size: 0.7rem; color: var(--muted); text-transform: uppercase;">— DJ Sombra</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+        <div class="section-header">
+            <div>
+                <span class="kicker">Help Center</span>
+                <h2>Preguntas Frecuentes</h2>
+            </div>
+        </div>
+        
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-q"><span>¿Cuál es el tiempo de entrega de muebles?</span> <span class="icon">+</span></div>
+                <div class="faq-a">Fabricamos sobre pedido para asegurar la máxima calidad. El tiempo estimado es de 10 a 15 días hábiles dentro de México.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q"><span>¿Los servicios de DJ incluyen viáticos?</span> <span class="icon">+</span></div>
+                <div class="faq-a">Dentro de CDMX y Área Metropolitana los viáticos están incluidos. Para eventos foráneos se cotiza por separado.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q"><span>¿Qué garantía tienen los productos?</span> <span class="icon">+</span></div>
+                <div class="faq-a">Todos nuestros muebles cuentan con 1 año de garantía contra defectos de fabricación y herrajes.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q"><span>¿Aceptan pagos internacionales?</span> <span class="icon">+</span></div>
+                <div class="faq-a">Sí, aceptamos tarjetas internacionales a través de PayPal y Stripe, además de Mercado Pago y transferencias locales.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            <div class="logo" style="margin-bottom: 2rem;">GDL.</div>
+            <p style="font-size: 0.8rem; color: var(--muted); max-width: 300px; line-height: 1.6;">
+                Diseño y fabricación de equipamiento profesional para DJ. Servicios de producción musical y eventos de alto impacto.
+            </p>
+            <div style="margin-top: 3rem; display: flex; gap: 2rem;">
+                <a href="#">INSTAGRAM</a>
+                <a href="#">YOUTUBE</a>
+                <a href="#">TIKTOK</a>
+            </div>
+        </div>
+        <div>
+            <h4>Navegación</h4>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#muebles">Catálogo</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#blog">Blog</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Legal</h4>
+            <ul>
+                <li><a href="#">Términos y Condiciones</a></li>
+                <li><a href="#">Política de Privacidad</a></li>
+                <li><a href="#">Cookies</a></li>
+                <li><a href="#">Envíos y Devoluciones</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Soporte</h4>
+            <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem;">soporte@gdlprod.mx</p>
+            <p style="font-size: 0.8rem; color: var(--muted);">+52 (55) 4433 2211</p>
+            <p style="font-size: 0.8rem; color: var(--muted); margin-top: 1rem;">Showroom: CDMX (Cita previa)</p>
+        </div>
+    </footer>
+    <div style="padding: 2rem; text-align: center; border-top: var(--border-width) solid var(--border); font-size: 0.6rem; color: var(--muted);">
+        © 2026 GDL PRODUCCIÓN & MÚSICA. TODOS LOS DERECHOS RESERVADOS.
+    </div>
+</div>
+
+<a href="https://wa.me/525544332211" class="wa-float" target="_blank">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+</a>
+
+<script>
+    // --- State Management ---
+    let cart = JSON.parse(localStorage.getItem('gdl_cart')) || [];
+    let currentServiceBase = 5500;
+
+    // --- UI Elements ---
+    const cartToggle = document.getElementById('cart-toggle');
+    const cartCount = document.getElementById('cart-count');
+    const cartDrawer = document.getElementById('cart-drawer');
+    const closeCart = document.getElementById('close-cart');
+    const overlay = document.getElementById('overlay');
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    
+    const bookingModal = document.getElementById('booking-modal');
+    const closeModal = document.getElementById('close-modal');
+    const bookingForm = document.getElementById('booking-form');
+    const hoursInput = document.getElementById('event-hours');
+    const calcTotal = document.getElementById('calc-total');
+    const serviceNameDisplay = document.getElementById('modal-service-name');
+
+    // --- Cart Logic ---
+    function updateCartUI() {
+        cartCount.textContent = cart.length;
+        localStorage.setItem('gdl_cart', JSON.stringify(cart));
+        
+        if (cart.length === 0) {
+            cartItems.innerHTML = '<p style="color: var(--muted); text-align: center; margin-top: 4rem;">Tu carrito está vacío.</p>';
+            cartTotal.textContent = '$0.00';
+            return;
+        }
+
+        let total = 0;
+        cartItems.innerHTML = cart.map((item, idx) => {
+            total += item.price;
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: var(--border-width) solid var(--border); padding: 1.5rem 0;">
+                    <div>
+                        <div style="font-size: 0.9rem; text-transform: uppercase;">${item.name}</div>
+                        <div style="color: var(--accent); font-size: 0.8rem;">$${item.price.toLocaleString()}</div>
+                    </div>
+                    <button onclick="removeFromCart(${idx})" style="background:none; border:none; color:var(--muted); cursor:pointer;">[QUITAR]</button>
+                </div>
+            `;
+        }).join('');
+        cartTotal.textContent = `$${total.toLocaleString()}.00`;
+    }
+
+    window.removeFromCart = (idx) => {
+        cart.splice(idx, 1);
+        updateCartUI();
+    };
+
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = {
+                id: btn.dataset.id,
+                name: btn.dataset.name,
+                price: parseInt(btn.dataset.price)
+            };
+            cart.push(item);
+            updateCartUI();
+            cartDrawer.classList.add('active');
+            overlay.classList.add('active');
+        });
+    });
+
+    // --- Modal & Drawer Controls ---
+    cartToggle.addEventListener('click', () => {
+        cartDrawer.classList.add('active');
+        overlay.classList.add('active');
+    });
+    closeCart.addEventListener('click', () => {
+        cartDrawer.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    document.querySelectorAll('.open-booking').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentServiceBase = parseInt(btn.dataset.base);
+            serviceNameDisplay.textContent = btn.dataset.name.toUpperCase();
+            updateBookingCalc();
+            bookingModal.classList.add('active');
+            overlay.classList.add('active');
+        });
+    });
+
+    closeModal.addEventListener('click', () => {
+        bookingModal.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    overlay.addEventListener('click', () => {
+        cartDrawer.classList.remove('active');
+        bookingModal.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    // --- Booking Calculation ---
+    function updateBookingCalc() {
+        const hours = parseInt(hoursInput.value) || 5;
+        const extraHours = Math.max(0, hours - 5);
+        const total = currentServiceBase + (extraHours * 1200);
+        calcTotal.textContent = `$${total.toLocaleString()}`;
+    }
+
+    hoursInput.addEventListener('input', updateBookingCalc);
+
+    bookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Reserva enviada con éxito. Redirigiendo a pasarela de pago para el anticipo ($1,500).');
+        bookingModal.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    // --- FAQ Accordion ---
+    document.querySelectorAll('.faq-q').forEach(q => {
+        q.addEventListener('click', () => {
+            const item = q.parentElement;
+            const wasActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            if (!wasActive) item.classList.add('active');
+        });
+    });
+
+    // --- Filtering ---
+    document.querySelectorAll('.filter-nav span').forEach(span => {
+        span.addEventListener('click', () => {
+            const filter = span.dataset.filter;
+            document.querySelectorAll('.filter-nav span').forEach(s => s.classList.remove('active'));
+            span.classList.add('active');
+            
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (filter === 'all' || card.dataset.category === filter) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Initialize
+    updateCartUI();
+</script>
+
+</body>
+</html>
