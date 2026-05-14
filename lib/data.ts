@@ -1,5 +1,4 @@
-import { promises as fs } from 'fs'
-import path from 'path'
+import { prisma } from './prisma'
 
 export interface Product {
   id: string
@@ -12,40 +11,81 @@ export interface Product {
   img: string
 }
 
-const dataFile = path.join(process.cwd(), 'data', 'products.json')
+function toProduct(row: {
+  id: number
+  name: string
+  desc: string
+  price: number
+  category: string
+  tag: string | null
+  amazon: boolean
+  img: string
+}): Product {
+  return {
+    id: String(row.id),
+    name: row.name,
+    desc: row.desc,
+    price: row.price,
+    category: row.category,
+    tag: row.tag,
+    amazon: row.amazon,
+    img: row.img,
+  }
+}
 
 export async function getProducts(): Promise<Product[]> {
-  const raw = await fs.readFile(dataFile, 'utf-8')
-  return JSON.parse(raw)
+  const rows = await prisma.product.findMany({ orderBy: { id: 'asc' } })
+  return rows.map(toProduct)
 }
 
 export async function getProduct(id: string): Promise<Product | undefined> {
-  const products = await getProducts()
-  return products.find(p => p.id === id)
+  const row = await prisma.product.findUnique({ where: { id: Number(id) } })
+  return row ? toProduct(row) : undefined
 }
 
 export async function createProduct(data: Omit<Product, 'id'>): Promise<Product> {
-  const products = await getProducts()
-  const id = String(Date.now())
-  const product: Product = { id, ...data }
-  products.push(product)
-  await fs.writeFile(dataFile, JSON.stringify(products, null, 2))
-  return product
+  const row = await prisma.product.create({
+    data: {
+      name: data.name,
+      desc: data.desc,
+      price: data.price,
+      category: data.category,
+      tag: data.tag,
+      img: data.img,
+      amazon: data.amazon,
+    },
+  })
+  return toProduct(row)
 }
 
-export async function updateProduct(id: string, data: Partial<Omit<Product, 'id'>>): Promise<Product | undefined> {
-  const products = await getProducts()
-  const idx = products.findIndex(p => p.id === id)
-  if (idx === -1) return undefined
-  products[idx] = { ...products[idx], ...data }
-  await fs.writeFile(dataFile, JSON.stringify(products, null, 2))
-  return products[idx]
+export async function updateProduct(
+  id: string,
+  data: Partial<Omit<Product, 'id'>>
+): Promise<Product | undefined> {
+  try {
+    const row = await prisma.product.update({
+      where: { id: Number(id) },
+      data: {
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.desc !== undefined && { desc: data.desc }),
+        ...(data.price !== undefined && { price: data.price }),
+        ...(data.category !== undefined && { category: data.category }),
+        ...(data.tag !== undefined && { tag: data.tag }),
+        ...(data.img !== undefined && { img: data.img }),
+        ...(data.amazon !== undefined && { amazon: data.amazon }),
+      },
+    })
+    return toProduct(row)
+  } catch {
+    return undefined
+  }
 }
 
 export async function deleteProduct(id: string): Promise<boolean> {
-  const products = await getProducts()
-  const filtered = products.filter(p => p.id !== id)
-  if (filtered.length === products.length) return false
-  await fs.writeFile(dataFile, JSON.stringify(filtered, null, 2))
-  return true
+  try {
+    await prisma.product.delete({ where: { id: Number(id) } })
+    return true
+  } catch {
+    return false
+  }
 }

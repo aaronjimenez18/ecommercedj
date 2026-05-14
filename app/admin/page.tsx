@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Product } from '@/lib/data'
 
 const categories = ['mesas', 'cabinas', 'accesorios']
@@ -22,37 +22,49 @@ function loadProducts(setter: (p: Product[]) => void) {
 }
 
 export default function AdminPage() {
-  const [auth, setAuth] = useState(() => typeof window !== 'undefined' && !!localStorage.getItem('gdl_admin'))
+  const [user, setUser] = useState<{ id: string; email: string } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [products, setProducts] = useState<Product[]>([])
   const [form, setForm] = useState<FormData>(emptyForm)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [error, setError] = useState('')
 
-  if (auth && products.length === 0) {
-    loadProducts(setProducts)
-  }
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setUser(data.user)
+          loadProducts(setProducts)
+        }
+        setLoading(false)
+      })
+  }, [])
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    const res = await fetch('/api/auth', {
+    setError('')
+    const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ email, password }),
     })
+    const data = await res.json()
     if (res.ok) {
-      setAuth(true)
-      localStorage.setItem('gdl_admin', '1')
+      setUser(data.user)
       loadProducts(setProducts)
     } else {
-      setError('Contraseña incorrecta')
+      setError(data.error || 'Error al iniciar sesión')
     }
   }
 
-  function handleLogout() {
-    localStorage.removeItem('gdl_admin')
-    setAuth(false)
+  async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    setUser(null)
     setPassword('')
+    setEmail('')
   }
 
   function handleEdit(p: Product) {
@@ -106,7 +118,15 @@ export default function AdminPage() {
     loadProducts(setProducts)
   }
 
-  if (!auth) {
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--fg)', fontFamily: 'var(--font-mono)' }}>
+        <p>Cargando...</p>
+      </div>
+    )
+  }
+
+  if (!user) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--fg)', fontFamily: 'var(--font-mono)' }}>
         <form onSubmit={handleLogin} style={{ border: 'var(--border-width) solid var(--border)', padding: '4rem', maxWidth: '400px', width: '100%' }}>
@@ -114,11 +134,19 @@ export default function AdminPage() {
             Admin GDL
           </h2>
           <input
+            type="email"
+            placeholder="CORREO"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            autoFocus
+          />
+          <input
             type="password"
             placeholder="CONTRASEÑA"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            autoFocus
+            required
           />
           {error && <p style={{ color: 'var(--accent)', fontSize: '0.8rem', marginBottom: '1rem' }}>{error}</p>}
           <button type="submit" className="btn btn-accent" style={{ width: '100%' }}>ENTRAR</button>
@@ -131,7 +159,10 @@ export default function AdminPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--fg)', fontFamily: 'var(--font-mono)' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: 'var(--border-width) solid var(--border)' }}>
         <div className="logo">GDL Admin</div>
-        <button onClick={handleLogout} className="btn btn-sm">CERRAR SESIÓN</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>{user.email}</span>
+          <button onClick={handleLogout} className="btn btn-sm">CERRAR SESIÓN</button>
+        </div>
       </header>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', padding: '2rem' }}>
