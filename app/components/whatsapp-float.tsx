@@ -11,20 +11,22 @@ export default function WhatsAppFloat() {
         right: '2rem',
         width: '64px',
         height: '64px',
-        background: '#25D366',
+        background: 'linear-gradient(135deg, #25D366, #128C7E)',
         borderRadius: '50%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1000,
-        boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-        transition: '0.3s',
+        boxShadow: '0 8px 32px rgba(37, 211, 102, 0.3), 0 2px 8px rgba(0,0,0,0.3)',
+        transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'scale(1.1) rotate(10deg)'
+        e.currentTarget.style.transform = 'scale(1.1) translateY(-4px)'
+        e.currentTarget.style.boxShadow = '0 12px 40px rgba(37, 211, 102, 0.4), 0 4px 12px rgba(0,0,0,0.3)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = ''
+        e.currentTarget.style.boxShadow = '0 8px 32px rgba(37, 211, 102, 0.3), 0 2px 8px rgba(0,0,0,0.3)'
       }}
     >
       <svg width="32" height="32" viewBox="0 0 24 24" fill="white">

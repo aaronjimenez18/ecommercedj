@@ -6,9 +6,9 @@ export default function Services({ onBookingOpen }: { onBookingOpen: (base: numb
           <span className="kicker">Standard Set</span>
           <h3>Servicio DJ Profesional</h3>
           <span className="price" style={{ fontSize: '3.5rem' }}>
-            $5,500 <small style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>/ 5H</small>
+            $5,500 <small style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>/ 5H</small>
           </span>
-          <p style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--muted)', lineHeight: 1.7 }}>
             Curaduría musical experta para eventos privados, lanzamientos y corporativos.
           </p>
           <ul className="service-list">
@@ -27,9 +27,9 @@ export default function Services({ onBookingOpen }: { onBookingOpen: (base: numb
           <span className="kicker">Full Experience</span>
           <h3>Servicio Premium Gear</h3>
           <span className="price" style={{ fontSize: '3.5rem' }}>
-            $7,500 <small style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>/ 5H</small>
+            $7,500 <small style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>/ 5H</small>
           </span>
-          <p style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--muted)', lineHeight: 1.7 }}>
             Producción audiovisual completa. Transformamos cualquier espacio en un club de primer nivel.
           </p>
           <ul className="service-list">
