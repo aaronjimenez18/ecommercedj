@@ -27,7 +27,7 @@ export default function Testimonials() {
         <div style={{ fontSize: '0.8rem' }}>GOOGLE RATING: 5.0 ⭐⭐⭐⭐⭐</div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+      <div className="testimonials-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
         {testimonials.map((t, i) => (
           <div key={i} style={{ border: 'var(--border-width) solid var(--border)', padding: '3rem' }}>
             <div style={{ color: 'var(--accent)', marginBottom: '1.5rem' }}>{t.stars}</div>

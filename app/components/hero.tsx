@@ -106,7 +106,7 @@ export default function Hero() {
       <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
         <a href="#muebles" className="btn btn-accent">Ver Catálogo</a>
         <a href="#servicios" className="btn">Contratar DJ</a>
-        <a href="https://amazon.com" target="_blank" rel="noopener noreferrer" className="btn btn-amazon">
+        <a href="https://www.amazon.com/" target="_blank" rel="noopener noreferrer" className="btn btn-amazon">
           Amazon Store
         </a>
       </div>

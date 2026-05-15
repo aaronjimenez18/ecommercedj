@@ -48,7 +48,7 @@ export default function Blog() {
         <p style={{ color: 'var(--muted)', marginBottom: '2.5rem' }}>
           Recibe descuentos exclusivos en muebles y guías de producción semanalmente.
         </p>
-        <form style={{ display: 'flex', maxWidth: '600px', margin: '0 auto', gap: '1rem' }} onSubmit={e => e.preventDefault()}>
+        <form className="newsletter-form" style={{ display: 'flex', maxWidth: '600px', margin: '0 auto', gap: '1rem' }} onSubmit={e => e.preventDefault()}>
           <input type="email" placeholder="TU EMAIL" style={{ marginBottom: 0, flex: 1 }} />
           <button className="btn btn-accent" style={{ whiteSpace: 'nowrap' }}>Suscribirme</button>
         </form>
