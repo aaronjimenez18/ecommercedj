@@ -1,3 +1,5 @@
+'use client'
+
 export default function Services({ onBookingOpen }: { onBookingOpen: (base: number, name: string) => void }) {
   return (
     <section id="servicios" style={{ padding: 0 }}>

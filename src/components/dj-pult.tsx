@@ -39,11 +39,12 @@ function Loader() {
   )
 }
 
-function Model() {
+function Model({ spinRef, onReady }: { spinRef?: { current: number }; onReady?: () => void }) {
   const { scene } = useGLTF("/models/mesa3d.glb")
   const groupRef = useRef<THREE.Group>(null!)
   const mouseRef = useRef({ x: 0, y: 0 })
   const curRef = useRef({ x: 0, y: 0, rotX: 0, time: 0 })
+  const readyFired = useRef(false)
 
   useEffect(() => {
     const onMouse = (e: MouseEvent) => {
@@ -52,15 +53,23 @@ function Model() {
       mouseRef.current = { x, y }
     }
     window.addEventListener("mousemove", onMouse, { passive: true })
+
+    requestAnimationFrame(() => {
+      if (!readyFired.current) {
+        readyFired.current = true
+        onReady?.()
+      }
+    })
+
     return () => window.removeEventListener("mousemove", onMouse)
-  }, [])
+  }, [onReady])
 
   useFrame(() => {
     const t = mouseRef.current
     const c = curRef.current
     c.time += 0.02
 
-    const autoRotY = c.time * 0.15
+    const autoRotY = c.time * 0.15 + (spinRef?.current ?? 0)
 
     c.x += (t.x * 0.4 - c.x) * 0.05
     c.y += (t.y * 0.25 - c.y) * 0.05
@@ -74,7 +83,7 @@ function Model() {
       groupRef.current.position.y = c.y + floatY
       groupRef.current.rotation.x = c.rotX
       groupRef.current.rotation.y = autoRotY + t.x * 0.4
-      groupRef.current.scale.setScalar(breathe)
+      groupRef.current.scale.setScalar(breathe * 1.9)
     }
   })
 
@@ -98,7 +107,7 @@ function Model() {
   )
 }
 
-export default function DJPult3D() {
+export default function DJPult3D({ spinRef, onReady }: { spinRef?: { current: number }; onReady?: () => void }) {
   return (
     <Canvas
       camera={{ position: [0, 0.3, 4.5], fov: 30 }}
@@ -116,7 +125,7 @@ export default function DJPult3D() {
         <directionalLight position={[5, 5, 5]} intensity={1.5} castShadow />
         <directionalLight position={[-3, 3, -3]} intensity={0.4} />
         <spotLight position={[0, 8, 0]} intensity={0.3} angle={0.5} penumbra={0.5} />
-        <Model />
+        <Model spinRef={spinRef} onReady={onReady} />
         <ContactShadows position={[0, -1.2, 0]} opacity={0.45} scale={5} blur={2.5} far={3} />
         <Environment preset="studio" />
       </Suspense>
