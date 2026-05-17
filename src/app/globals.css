@@ -860,6 +860,9 @@ section::after {
   .newsletter-box { padding: 4rem 2rem; }
   footer { gap: 2.5rem; padding: 4rem 2rem; }
   .faq-a { max-width: 100%; }
+
+  .horizontal-card { min-width: 280px; }
+  .horizontal-track { gap: 1.25rem; }
 }
 
 @media (max-width: 600px) {
@@ -890,9 +893,13 @@ section::after {
   }
 
   .product-card { padding: 1.5rem; }
+  .horizontal-card { min-width: 220px; }
 
   .product-info h3 { font-size: 1.2rem; }
   .price { font-size: 1.2rem; }
+
+  .horizontal-track { gap: 0.75rem; }
+  .horizontal-card .product-img { aspect-ratio: 1/1; }
 
   .service-panel { padding: 3rem 1.5rem; }
   .service-panel .price { font-size: 2.5rem !important; }
@@ -965,6 +972,22 @@ section::after {
   .newsletter-form { flex-direction: column; gap: 0.8rem; max-width: 100% !important; }
   .newsletter-form input { width: 100%; }
   .newsletter-form button { width: 100%; }
+
+  .product-card { padding: 1rem; }
+  .horizontal-card { min-width: 180px; }
+  .product-info h3 { font-size: 1rem; }
+  .product-info p { font-size: 0.6rem; min-height: 2.5em; }
+  .price { font-size: 0.95rem; }
+  .horizontal-track { gap: 0.5rem; }
+}
+
+@media (max-width: 400px) {
+  .horizontal-card { min-width: 150px; }
+  .product-card { padding: 0.75rem; gap: 0.75rem; }
+  .product-info h3 { font-size: 0.85rem; }
+  .product-info p { font-size: 0.55rem; min-height: 2em; }
+  .price { font-size: 0.85rem; }
+  .horizontal-track { gap: 0.4rem; }
 }
 
 @media (max-width: 600px) {

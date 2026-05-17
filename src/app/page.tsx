@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
 import { CartProvider } from '@/lib/store/cart-context'
 import Header from '@/components/layout/header'
 import Hero from '@/components/sections/hero'
@@ -57,6 +58,16 @@ function HomePage() {
 
     gsap.ticker.lagSmoothing(0)
 
+    // Sync Lenis limit whenever ScrollTrigger refreshes (e.g. pin-spacers)
+    const onScrollRefresh = () => lenis.resize()
+    ScrollTrigger.addEventListener('refresh', onScrollRefresh)
+
+    // Initial refresh after all triggers settle
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh()
+      lenis.resize()
+    })
+
     gsap.to(".header-wrap", {
       autoAlpha: 1,
       y: 0,
@@ -66,6 +77,7 @@ function HomePage() {
     })
 
     return () => {
+      ScrollTrigger.removeEventListener('refresh', onScrollRefresh)
       lenis.destroy()
       gsap.ticker.lagSmoothing(1)
     }
