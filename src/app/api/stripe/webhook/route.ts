@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe/server'
+import { getStripe } from '@/lib/stripe/server'
 import { prisma } from '@/lib/db/prisma'
 import { sendOrderConfirmation } from '@/lib/email'
 
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
     }
 
-    const event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
+    const event = getStripe().webhooks.constructEvent(body, sig, endpointSecret)
 
     switch (event.type) {
       case 'payment_intent.succeeded': {
