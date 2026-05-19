@@ -33,8 +33,10 @@ function ProductContent() {
     return (
       <>
         <Header onCartToggle={() => {}} />
-        <div className="wrapper" style={{ padding: '6rem 3rem', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ color: 'var(--muted)' }}>Cargando...</p>
+        <div className="wrapper">
+          <div className="product-loading">
+            <p>Cargando...</p>
+          </div>
         </div>
         <Footer />
       </>
@@ -45,9 +47,11 @@ function ProductContent() {
     return (
       <>
         <Header onCartToggle={() => {}} />
-        <div className="wrapper" style={{ padding: '6rem 3rem', minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
-          <h2>Producto no encontrado</h2>
-          <Link href="/" className="btn">Volver al catálogo</Link>
+        <div className="wrapper">
+          <div className="product-not-found">
+            <h2>Producto no encontrado</h2>
+            <Link href="/" className="btn">Volver al catálogo</Link>
+          </div>
         </div>
         <Footer />
       </>
@@ -61,13 +65,8 @@ function ProductContent() {
       <Header onCartToggle={() => setCartOpen(true)} />
 
       <div className="wrapper">
-        <div style={{ padding: '6rem 3rem 0' }}>
-          <Link
-            href="/"
-            style={{ color: 'var(--muted)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', textDecoration: 'none', transition: 'color 0.2s' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--fg)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
-          >
+        <div className="product-back-link">
+          <Link href="/">
             ← Volver al catálogo
           </Link>
         </div>
@@ -80,7 +79,7 @@ function ProductContent() {
           <div className="product-detail-info">
             <div>
               <span className="kicker">{product.category}</span>
-              <h2 style={{ marginTop: '0.5rem' }}>{product.name}</h2>
+              <h2>{product.name}</h2>
             </div>
             <p className="product-detail-desc">{product.desc}</p>
             <span className="product-detail-price">${product.price.toLocaleString()}</span>
@@ -89,8 +88,8 @@ function ProductContent() {
                 href="https://amazon.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn"
-                style={{ textAlign: 'center', borderColor: '#fa8b0c', color: '#fa8b0c' }}
+                className="btn btn-amazon"
+                style={{ textAlign: 'center' }}
               >
                 COMPRAR EN AMAZON
               </a>

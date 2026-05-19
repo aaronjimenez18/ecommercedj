@@ -1,6 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const faqs = [
   { q: '¿Cuál es el tiempo de entrega de muebles?', a: 'Fabricamos sobre pedido para asegurar la máxima calidad. El tiempo estimado es de 10 a 15 días hábiles dentro de México.' },
@@ -11,12 +16,37 @@ const faqs = [
 
 export default function FAQ() {
   const [active, setActive] = useState<number | null>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useGSAP(() => {
+    const section = sectionRef.current
+    if (!section) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const items = gsap.utils.toArray<HTMLElement>('.faq-item')
+    if (items.length === 0) return
+
+    gsap.set(items, { y: 20, autoAlpha: 0 })
+
+    gsap.to(items, {
+      y: 0,
+      autoAlpha: 1,
+      stagger: 0.08,
+      duration: 0.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: section,
+        start: "top 80%",
+        end: "top 30%",
+        scrub: 1,
+      },
+    })
+  }, { scope: sectionRef, dependencies: [] })
 
   return (
-    <section id="faq">
+    <section ref={sectionRef} id="faq">
       <div className="section-header">
         <div>
-          <span className="kicker">Help Center</span>
           <h2>Preguntas Frecuentes</h2>
         </div>
       </div>
@@ -28,7 +58,7 @@ export default function FAQ() {
               <span>{faq.q}</span>
               <span className="icon">+</span>
             </div>
-            <div className="faq-a">{faq.a}</div>
+            <div className="faq-a"><div className="faq-a-inner">{faq.a}</div></div>
           </div>
         ))}
       </div>

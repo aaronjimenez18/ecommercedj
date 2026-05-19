@@ -10,10 +10,9 @@ import type { Product } from '@/types'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
-export default function HorizontalCatalog({ onCartOpen }: { onCartOpen: () => void }) {
+export default function CatalogSection({ onCartOpen }: { onCartOpen: () => void }) {
   const router = useRouter()
   const sectionRef = useRef<HTMLElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
   const [products, setProducts] = useState<Product[]>([])
   const [filter, setFilter] = useState('all')
   const { addItem } = useCart()
@@ -29,20 +28,23 @@ export default function HorizontalCatalog({ onCartOpen }: { onCartOpen: () => vo
   const label = (f: string) => f === 'all' ? 'Todos' : f.charAt(0).toUpperCase() + f.slice(1)
   const filterKey = `${filter}-${filtered.length}`
 
+  const loading = products.length === 0
+
   useGSAP(() => {
     const section = sectionRef.current
-    if (!section) return
+    if (!section || products.length === 0) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     gsap.set(".section-header .kicker, .section-header h2, .section-header .filter-nav", {
-      y: 40,
+      y: 20,
       autoAlpha: 0,
     })
 
     gsap.to(".section-header .kicker, .section-header h2, .section-header .filter-nav", {
       y: 0,
       autoAlpha: 1,
-      duration: 0.6,
-      stagger: 0.15,
+      duration: 0.5,
+      stagger: 0.1,
       ease: "power3.out",
       scrollTrigger: {
         trigger: section,
@@ -51,40 +53,43 @@ export default function HorizontalCatalog({ onCartOpen }: { onCartOpen: () => vo
         toggleActions: "play none none none",
       },
     })
-  }, { scope: sectionRef, dependencies: [] })
 
-  useGSAP(() => {
-    const track = trackRef.current
-    const section = sectionRef.current
-    if (!track || !section || filtered.length === 0) return
+    const cards = gsap.utils.toArray<HTMLElement>(".catalog-card")
+    if (cards.length === 0) return
 
-    gsap.set(track, { x: 0 })
+    const isMobile = window.innerWidth < 900
 
-    const style = getComputedStyle(section)
-    const padLeft = parseFloat(style.paddingLeft)
-    const padRight = parseFloat(style.paddingRight)
-    const contentWidth = section.clientWidth - padLeft - padRight
-    const overflowX = track.scrollWidth - contentWidth
+    if (isMobile) {
+      gsap.set(cards, { opacity: 1, y: 0, scale: 1 })
+    } else {
+      gsap.set(cards, { scale: 0.5, opacity: 0, y: 60 })
 
-    if (overflowX <= 0) return
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          pin: true,
+          start: "top top",
+          end: `+=${cards.length * 350}`,
+          scrub: 1.5,
+          invalidateOnRefresh: true,
+        },
+      })
 
-    gsap.to(track, {
-      x: -overflowX,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: section,
-        pin: true,
-        pinSpacing: true,
-        start: 'top top',
-        end: () => `+=${overflowX}`,
-        scrub: 1,
-        invalidateOnRefresh: true,
-      }
-    })
+      cards.forEach((card, i) => {
+        const pos = i / cards.length
+        tl.to(card, {
+          scale: 1,
+          opacity: 1,
+          y: 0,
+          duration: 0.5 / cards.length,
+          ease: "power2.out",
+        }, pos)
+      })
+    }
   }, { scope: sectionRef, dependencies: [filterKey], revertOnUpdate: true })
 
   return (
-    <section ref={sectionRef} className="horizontal-section" id="muebles">
+    <section ref={sectionRef} className="catalog-section" id="muebles">
       <div className="section-header">
         <div>
           <span className="kicker">Muebles & Equipos</span>
@@ -102,10 +107,23 @@ export default function HorizontalCatalog({ onCartOpen }: { onCartOpen: () => vo
           ))}
         </div>
       </div>
-      <div className="horizontal-track" ref={trackRef}>
+      {loading && (
+        <p style={{ color: 'var(--muted)', textAlign: 'center', padding: 'var(--space-4xl) 0' }}>
+          Cargando catálogo...
+        </p>
+      )}
+
+      {!loading && filtered.length === 0 && (
+        <p style={{ color: 'var(--muted)', textAlign: 'center', padding: 'var(--space-4xl) 0' }}>
+          No hay productos en esta categoría
+        </p>
+      )}
+
+      {!loading && filtered.length > 0 && (
+      <div className="catalog-grid">
         {filtered.map(product => (
           <div
-            className="product-card horizontal-card"
+            className="product-card catalog-card"
             key={product.id}
             onClick={() => router.push(`/productos/${product.id}`)}
             style={{ cursor: 'pointer' }}
@@ -118,7 +136,7 @@ export default function HorizontalCatalog({ onCartOpen }: { onCartOpen: () => vo
               <h3>{product.name}</h3>
               <p>{product.desc}</p>
             </div>
-            <div className="horizontal-card-footer">
+            <div className="catalog-card-footer">
               <span className="price">${product.price.toLocaleString()}</span>
               {product.amazon ? (
                 <a
@@ -146,6 +164,7 @@ export default function HorizontalCatalog({ onCartOpen }: { onCartOpen: () => vo
           </div>
         ))}
       </div>
+      )}
     </section>
   )
 }

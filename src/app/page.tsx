@@ -7,9 +7,10 @@ import { useGSAP } from '@gsap/react'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import { CartProvider } from '@/lib/store/cart-context'
+import { useAudioAmbient } from '@/hooks/use-audio-ambient'
 import Header from '@/components/layout/header'
 import Hero from '@/components/sections/hero'
-import HorizontalCatalog from '@/components/sections/horizontal-catalog'
+import CatalogSection from '@/components/sections/horizontal-catalog'
 import Services from '@/components/sections/services'
 import Blog from '@/components/sections/blog'
 import Testimonials from '@/components/sections/testimonials'
@@ -23,6 +24,7 @@ import Overlay from '@/components/ui/overlay'
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 function HomePage() {
+  useAudioAmbient()
   const [cartOpen, setCartOpen] = useState(false)
   const [bookingOpen, setBookingOpen] = useState(false)
   const [bookingBase, setBookingBase] = useState(5500)
@@ -84,22 +86,24 @@ function HomePage() {
   }, { scope: pageRef })
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const sections = gsap.utils.toArray<HTMLElement>(
-      "section:not(#inicio):not(#muebles)"
+      "section:not(#inicio):not(#muebles):not(#servicios):not(#testimonios):not(#faq)"
     )
 
     sections.forEach((section) => {
       gsap.from(section.children, {
-        y: 50,
+        y: 24,
         autoAlpha: 0,
-        stagger: 0.08,
-        duration: 0.7,
+        stagger: 0.06,
+        duration: 0.6,
         ease: "power2.out",
         scrollTrigger: {
           trigger: section,
           start: "top 88%",
           end: "top 45%",
-          scrub: 1.2,
+          scrub: 1,
         },
       })
     })
@@ -119,13 +123,13 @@ function HomePage() {
       />
 
       <div ref={pageRef}>
-        <div className="header-wrap" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, opacity: 0, visibility: 'hidden' }}>
+        <div className="header-wrap">
           <Header onCartToggle={() => setCartOpen(true)} />
         </div>
 
-        <div className="wrapper" style={{ paddingTop: '5rem' }}>
+        <div className="wrapper">
           <Hero />
-          <HorizontalCatalog onCartOpen={() => setCartOpen(true)} />
+          <CatalogSection onCartOpen={() => setCartOpen(true)} />
           <Services onBookingOpen={openBooking} />
           <Blog />
           <Testimonials />

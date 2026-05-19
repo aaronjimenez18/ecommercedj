@@ -17,16 +17,33 @@ export default function WhatsAppFloat() {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1000,
-        boxShadow: '0 8px 32px rgba(37, 211, 102, 0.3), 0 2px 8px rgba(0,0,0,0.3)',
-        transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+        boxShadow: 'none',
+        transition: 'transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'scale(1.1) translateY(-4px)'
         e.currentTarget.style.boxShadow = '0 12px 40px rgba(37, 211, 102, 0.4), 0 4px 12px rgba(0,0,0,0.3)'
       }}
       onMouseLeave={(e) => {
+        if (e.currentTarget.dataset.pressed !== 'true') {
+          e.currentTarget.style.transform = ''
+        }
+        e.currentTarget.style.boxShadow = 'none'
+      }}
+      onPointerDown={(e) => {
+        e.currentTarget.dataset.pressed = 'true'
+        e.currentTarget.style.transform = 'scale(0.95)'
+        e.currentTarget.style.transition = 'transform 80ms cubic-bezier(0.23, 1, 0.32, 1)'
+      }}
+      onPointerUp={(e) => {
+        e.currentTarget.dataset.pressed = 'false'
         e.currentTarget.style.transform = ''
-        e.currentTarget.style.boxShadow = '0 8px 32px rgba(37, 211, 102, 0.3), 0 2px 8px rgba(0,0,0,0.3)'
+        e.currentTarget.style.transition = 'transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1)'
+      }}
+      onPointerLeave={(e) => {
+        e.currentTarget.dataset.pressed = 'false'
+        e.currentTarget.style.transform = ''
+        e.currentTarget.style.transition = 'transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1)'
       }}
     >
       <svg width="32" height="32" viewBox="0 0 24 24" fill="white">

@@ -1,9 +1,29 @@
 'use client'
 
+import { useState } from 'react'
 import { useCart } from '@/lib/store/cart-context'
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { items, total, removeItem } = useCart()
+  const [loading, setLoading] = useState(false)
+
+  const handleCheckout = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      setLoading(false)
+    }
+  }
 
   return (
     <div className={`drawer ${open ? 'active' : ''}`}>
@@ -35,7 +55,14 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           <span>TOTAL:</span>
           <span className="price">${total.toLocaleString()}.00</span>
         </div>
-        <button className="btn btn-accent" style={{ width: '100%' }}>PROCEDER AL PAGO</button>
+        <button
+          className="btn btn-accent"
+          style={{ width: '100%' }}
+          onClick={handleCheckout}
+          disabled={items.length === 0 || loading}
+        >
+          {loading ? 'PROCESANDO...' : 'PROCEDER AL PAGO'}
+        </button>
       </div>
     </div>
   )
