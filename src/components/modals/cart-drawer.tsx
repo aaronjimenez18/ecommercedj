@@ -27,37 +27,36 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
 
   return (
     <div className={`drawer ${open ? 'active' : ''}`}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: 'var(--border-width) solid var(--border)', paddingBottom: '1rem', marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '2.5rem' }}>CARRITO</h3>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--fg)', cursor: 'pointer', fontFamily: 'var(--font-mono)' }}>
+      <div className="drawer-header">
+        <h3>CARRITO</h3>
+        <button onClick={onClose} className="drawer-close">
           [CERRAR]
         </button>
       </div>
-      <div style={{ flexGrow: 1, overflowY: 'auto' }}>
+      <div className="drawer-body">
         {items.length === 0 ? (
-          <p style={{ color: 'var(--muted)', textAlign: 'center', marginTop: '4rem' }}>Tu carrito está vacío.</p>
+          <p className="drawer-empty">Tu carrito está vacío.</p>
         ) : (
           items.map((item, idx) => (
-            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: 'var(--border-width) solid var(--border)', padding: '1.5rem 0' }}>
+            <div key={idx} className="drawer-item">
               <div>
-                <div style={{ fontSize: '0.9rem', textTransform: 'uppercase' }}>{item.name}</div>
-                <div style={{ color: 'var(--accent)', fontSize: '0.8rem' }}>${item.price.toLocaleString()}</div>
+                <div className="drawer-item-name">{item.name}</div>
+                <div className="drawer-item-price">${item.price.toLocaleString()}</div>
               </div>
-              <button onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer' }}>
+              <button onClick={() => removeItem(idx)} className="drawer-item-remove">
                 [QUITAR]
               </button>
             </div>
           ))
         )}
       </div>
-      <div style={{ borderTop: 'var(--border-width) solid var(--border)', paddingTop: '2rem', marginTop: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', fontSize: '1.2rem' }}>
+      <div className="drawer-footer">
+        <div className="drawer-total">
           <span>TOTAL:</span>
           <span className="price">${total.toLocaleString()}.00</span>
         </div>
         <button
           className="btn btn-accent"
-          style={{ width: '100%' }}
           onClick={handleCheckout}
           disabled={items.length === 0 || loading}
         >

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 export default function BookingModal({
   open,
@@ -15,19 +15,47 @@ export default function BookingModal({
 }) {
   const [hours, setHours] = useState(5)
   const [submitted, setSubmitted] = useState(false)
+  const modalRef = useRef<HTMLDivElement>(null)
 
   const extraHours = Math.max(0, hours - 5)
   const total = serviceBase + extraHours * 1200
 
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'Tab') {
+        const focusable = modalRef.current?.querySelectorAll<HTMLElement>('button, input, select, textarea, [tabindex]:not([tabindex="-1"])')
+        if (!focusable || focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus()
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    const timer = setTimeout(() => {
+      const first = modalRef.current?.querySelector<HTMLElement>('button, input, select, textarea')
+      first?.focus()
+    }, 50)
+    return () => {
+      document.removeEventListener('keydown', handleKey)
+      clearTimeout(timer)
+    }
+  }, [open, onClose])
+
   if (submitted) {
     return (
-      <div className={`modal ${open ? 'active' : ''}`}>
+      <div className={`modal ${open ? 'active' : ''}`} role="dialog" aria-modal="true" aria-label="Reserva confirmada" ref={modalRef}>
         <div className="modal-inner" style={{ textAlign: 'center' }}>
-          <button onClick={onClose} className="modal-close">
+          <button onClick={onClose} className="modal-close" aria-label="Cerrar modal">
             [CERRAR]
           </button>
           <span className="kicker">SOLICITUD ENVIADA</span>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: 'var(--space-lg)' }}>RESERVA CONFIRMADA</h2>
+          <h2 style={{ marginBottom: 'var(--space-lg)' }}>RESERVA CONFIRMADA</h2>
           <p style={{ color: 'var(--muted)', maxWidth: '45ch', margin: '0 auto var(--space-lg)', lineHeight: 1.7 }}>
             Redirigiendo a pasarela de pago para el anticipo de $1,500.
           </p>
@@ -38,9 +66,9 @@ export default function BookingModal({
   }
 
   return (
-    <div className={`modal ${open ? 'active' : ''}`}>
+    <div className={`modal ${open ? 'active' : ''}`} role="dialog" aria-modal="true" aria-label="Formulario de reserva" ref={modalRef}>
       <div className="modal-inner">
-        <button onClick={onClose} className="modal-close">
+        <button onClick={onClose} className="modal-close" aria-label="Cerrar modal">
           [CERRAR]
         </button>
         <span className="kicker">{serviceName}</span>
@@ -53,11 +81,11 @@ export default function BookingModal({
           }}
         >
           <div className="booking-grid">
-            <input type="text" placeholder="NOMBRE COMPLETO" required className="span-2" />
-            <input type="email" placeholder="EMAIL" required />
-            <input type="tel" placeholder="TELÉFONO" required />
-            <input type="date" required id="event-date" />
-            <select id="event-type">
+            <input type="text" placeholder="NOMBRE COMPLETO" required className="span-2" aria-label="Nombre completo" />
+            <input type="email" placeholder="EMAIL" required aria-label="Correo electrónico" />
+            <input type="tel" placeholder="TELÉFONO" required aria-label="Teléfono" />
+            <input type="date" required id="event-date" aria-label="Fecha del evento" />
+            <select id="event-type" aria-label="Tipo de evento">
               <option value="interior">EVENTO INTERIOR</option>
               <option value="exterior">EVENTO EXTERIOR</option>
             </select>

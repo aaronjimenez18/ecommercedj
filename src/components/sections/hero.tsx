@@ -1,5 +1,5 @@
 "use client"
-import { useRef, useState, useEffect, useCallback } from "react"
+import { useRef, useState, useCallback } from "react"
 import dynamic from "next/dynamic"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -27,21 +27,8 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
   const spinRef = useRef(0)
   const [modelReady, setModelReady] = useState(false)
   const [introDone, setIntroDone] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
 
   const handleModelReady = useCallback(() => setModelReady(true), [])
-
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
-
-  useEffect(() => {
-    if (modelParallaxRef.current) {
-      modelParallaxRef.current.style.transform = `translateY(${scrollY * -0.15}px)`
-    }
-  }, [scrollY])
 
   useGSAP(() => {
     if (!modelReady) return
@@ -102,6 +89,20 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
         refreshPriority: 0,
       },
     })
+
+    if (modelParallaxRef.current) {
+      gsap.to(modelParallaxRef.current, {
+        y: -(window.innerHeight * 0.15),
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+          refreshPriority: 0,
+        },
+      })
+    }
 
     ScrollTrigger.refresh()
   }, { scope: sectionRef, dependencies: [introDone], revertOnUpdate: true })

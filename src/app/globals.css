@@ -1,17 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --bg: oklch(3% 0.008 50);
-  --surface: oklch(5.5% 0.01 50);
-  --surface-elevated: oklch(9% 0.012 50);
-  --fg: oklch(93% 0.008 50);
-  --fg-dim: oklch(73% 0.008 50);
-  --muted: oklch(38% 0.01 50);
-  --border: oklch(14% 0.015 50);
-  --border-hover: oklch(22% 0.015 50);
+  --bg: oklch(0.5% 0.005 275);
+  --surface: oklch(4% 0.008 275);
+  --surface-elevated: oklch(7% 0.01 275);
+  --fg: oklch(93% 0.008 275);
+  --fg-dim: oklch(73% 0.008 275);
+  --muted: oklch(38% 0.01 275);
+  --border: oklch(14% 0.015 275);
+  --border-hover: oklch(22% 0.015 275);
   --accent: oklch(60% 0.28 330);
   --accent-glow: oklch(60% 0.28 330 / 0.15);
   --accent-soft: oklch(60% 0.28 330 / 0.08);
+  --accent-secondary: oklch(55% 0.22 275);
+  --accent-secondary-glow: oklch(55% 0.22 275 / 0.15);
+  --accent-secondary-soft: oklch(55% 0.22 275 / 0.06);
+  --amazon: oklch(65% 0.22 70);
 
   --font-display: 'Cormorant Garamond', 'Times New Roman', Times, serif;
   --font-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
@@ -91,7 +95,7 @@ header {
   border-bottom: var(--border-width) solid var(--border);
   position: sticky;
   top: 0;
-  background: oklch(3% 0.008 50 / 0.75);
+  background: oklch(0.5% 0.005 275 / 0.75);
   backdrop-filter: blur(20px) saturate(1.5);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
   z-index: 1000;
@@ -160,7 +164,7 @@ footer h4 {
   margin-bottom: var(--space-lg);
   font-size: var(--text-body-sm);
   letter-spacing: 0.15em;
-  color: var(--accent);
+  color: var(--muted);
 }
 
 footer ul {
@@ -198,8 +202,8 @@ section {
 }
 
 #muebles { padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 4vw, 3rem); }
-#blog, #testimonios { padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem); }
-#faq { padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3rem) clamp(2rem, 4vw, 3rem); }
+#blog, #testimonios { padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem); content-visibility: auto; contain-intrinsic-size: 600px; }
+#faq { padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3rem) clamp(2rem, 4vw, 3rem); content-visibility: auto; contain-intrinsic-size: 500px; }
 #servicios { padding: 0; }
 
 #servicios, #faq {
@@ -211,7 +215,7 @@ section {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: var(--border-width) solid var(--accent);
+  border-bottom: var(--border-width) solid var(--accent-soft);
   padding-bottom: var(--space-md);
 }
 
@@ -325,26 +329,22 @@ h3 {
 
 /* ── Amazon variant ── */
 .btn-amazon {
-  border-color: #fa8b0c !important;
-  color: #fa8b0c !important;
-  box-shadow: inset 0 1px 0 rgba(250, 139, 12, 0.15) !important;
+  border-color: var(--amazon);
+  color: var(--amazon);
+  box-shadow: inset 0 1px 0 oklch(65% 0.22 70 / 0.15);
 }
 
 .btn-amazon:hover {
-  background: #fa8b0c !important;
-  color: #000 !important;
+  background: var(--amazon);
+  color: var(--bg);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn-amazon:hover {
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      0 0 30px rgba(250, 139, 12, 0.15) !important;
+      0 0 30px oklch(65% 0.22 70 / 0.15);
   }
-}
-
-.btn-amazon:active {
-  transform: scale(0.97) !important;
 }
 
 /* ── Small variant ── */
@@ -378,15 +378,22 @@ h3 {
   letter-spacing: 0.1em;
 }
 
-.filter-nav span {
+.filter-nav button {
   cursor: pointer;
   color: var(--muted);
   transition: color var(--transition-fast);
   position: relative;
   padding-bottom: 4px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 0;
 }
 
-.filter-nav span::after {
+.filter-nav button::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -397,20 +404,25 @@ h3 {
   transition: width var(--transition-smooth);
 }
 
-.filter-nav span.active {
+.filter-nav button.active {
   color: var(--accent);
 }
 
-.filter-nav span.active::after {
+.filter-nav button.active::after {
   width: 100%;
 }
 
-.filter-nav span:hover {
+.filter-nav button:hover {
   color: var(--fg);
 }
 
-.filter-nav span:hover::after {
+.filter-nav button:hover::after {
   width: 100%;
+}
+
+.filter-nav button:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
 }
 
 /* ── Product Card ── */
@@ -586,7 +598,7 @@ h3 {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 40%, oklch(3% 0.008 50 / 0.6) 100%);
+  background: linear-gradient(180deg, transparent 40%, oklch(0.5% 0.005 275 / 0.6) 100%);
   pointer-events: none;
   transition: opacity var(--transition-smooth);
 }
@@ -615,7 +627,7 @@ h3 {
 }
 
 .testimonial-card:hover {
-  border-color: var(--accent);
+  border-color: var(--border-hover);
   transform: translateY(-2px);
 }
 
@@ -656,6 +668,11 @@ h3 {
   font-family: var(--font-display);
   letter-spacing: 0.05em;
   transition: color var(--transition-fast);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  color: inherit;
 }
 
 .faq-q:hover {
@@ -816,6 +833,37 @@ h3 {
   animation: pulse-hint 2s ease-in-out infinite;
 }
 
+/* ── WhatsApp Float ── */
+.wa-float {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: none;
+  transition: transform 160ms var(--ease-out), box-shadow 0.4s var(--ease-out);
+}
+
+.wa-float:hover {
+  transform: scale(1.1) translateY(-4px);
+  box-shadow: 0 12px 40px rgba(37, 211, 102, 0.4), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.wa-float:active {
+  transform: scale(0.95);
+  transition-duration: 80ms;
+}
+
+.wa-float svg {
+  display: block;
+}
+
 @keyframes pulse-hint {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
@@ -852,6 +900,87 @@ h3 {
 
 .drawer.active { right: 0; }
 
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: var(--border-width) solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.drawer-header h3 {
+  font-size: 2.5rem;
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  color: var(--fg);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: opacity var(--transition-fast);
+}
+
+.drawer-close:hover { opacity: 0.6; }
+
+.drawer-body {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.drawer-empty {
+  color: var(--muted);
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.drawer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--border-width) solid var(--border);
+  padding: 1.5rem 0;
+}
+
+.drawer-item-name {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.drawer-item-price {
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+.drawer-item-remove {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  font-family: var(--font-mono);
+}
+
+.drawer-item-remove:hover { color: var(--fg); }
+
+.drawer-footer {
+  border-top: var(--border-width) solid var(--border);
+  padding-top: 2rem;
+  margin-top: 2rem;
+}
+
+.drawer-footer .btn {
+  width: 100%;
+}
+
+.drawer-total {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
 /* ── Modal ── */
 .modal {
   position: fixed;
@@ -879,7 +1008,7 @@ h3 {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: oklch(0.5% 0.005 275 / 0.85);
   z-index: 1500;
   display: none;
   opacity: 0;
@@ -961,14 +1090,14 @@ form textarea:focus {
 
 .booking-hours span {
   font-size: 0.7rem;
-  color: var(--accent);
+  color: var(--muted);
 }
 
 .booking-total {
   background: var(--surface);
   border-radius: var(--radius-sm);
   padding: var(--space-lg);
-  border: var(--border-width) solid var(--accent);
+  border: var(--border-width) solid var(--accent-soft);
   margin: var(--space-md) 0;
 }
 
@@ -981,7 +1110,7 @@ form textarea:focus {
 .booking-total-row:last-child {
   margin-bottom: 0;
   font-size: 0.8rem;
-  color: var(--accent);
+  color: var(--muted);
 }
 
 .btn-full { width: 100%; }
@@ -1028,7 +1157,7 @@ form textarea:focus {
 }
 
 .footer-location-label {
-  color: var(--accent);
+  color: var(--muted);
   font-size: 0.6rem;
   letter-spacing: 0.15em;
   display: block;
@@ -1049,7 +1178,7 @@ form textarea:focus {
 
 /* ── Testimonials ── */
 .testimonial-stars {
-  color: var(--accent);
+  color: var(--muted);
   margin-bottom: var(--space-sm);
   font-size: 0.85rem;
   letter-spacing: 2px;
@@ -1286,7 +1415,7 @@ form textarea:focus {
     right: -100%;
     width: 100%;
     height: 100vh;
-    background: oklch(3% 0.008 50 / 0.95);
+    background: oklch(0.5% 0.005 275 / 0.95);
     backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
@@ -1334,10 +1463,9 @@ form textarea:focus {
   .logo { font-size: 1.5rem; }
 
   nav ul {
-    gap: var(--space-xs);
-    flex-wrap: wrap;
+    gap: var(--space-md);
   }
-  nav a { font-size: 0.6rem; }
+  nav a { font-size: 0.85rem; }
 
   .section-header {
     flex-direction: column;
@@ -1379,11 +1507,18 @@ form textarea:focus {
   .hero { padding: var(--space-4xl) var(--space-sm) var(--space-xl) !important; }
 
   .drawer { padding: var(--space-lg) var(--space-sm); }
-  .drawer h3 { font-size: 1.8rem !important; }
+  .drawer-header h3 { font-size: 1.8rem; }
+  .drawer-item { padding: 1rem 0; }
+  .drawer-item { padding: 0.75rem 0; }
+  .drawer-item-name { font-size: 0.7rem; }
+  .drawer-item-price { font-size: 0.65rem; }
+  .drawer-total { font-size: 0.9rem; }
+  .drawer-footer { padding-top: 1rem; margin-top: 1rem; }
+  .drawer-header { margin-bottom: 1rem; padding-bottom: 0.5rem; }
 
   .modal-inner { padding: var(--space-lg) var(--space-sm); }
-  .modal-inner h2 { font-size: 2rem !important; }
-  .modal form > div { grid-template-columns: 1fr !important; }
+  .modal-inner h2 { font-size: 2rem; }
+  .booking-grid { grid-template-columns: 1fr !important; }
   .modal form > div input[style*="gridColumn"],
   .modal form > div input[style*="grid-column"] { grid-column: span 1 !important; }
   .modal form > div > div { grid-column: span 1 !important; flex-direction: column !important; }
@@ -1392,15 +1527,18 @@ form textarea:focus {
   .booking-hours input { width: 100% !important; }
   .modal-inner .btn-full { padding: var(--space-md) var(--space-sm); font-size: var(--text-body-sm); white-space: normal; }
 
+  .loader-3 { width: 7em; }
+  .loader-3 .circle { width: 0.7em; height: 0.7em; }
+
   .wa-float {
-    width: 52px !important;
-    height: 52px !important;
-    bottom: 1rem !important;
-    right: 1rem !important;
+    width: 52px;
+    height: 52px;
+    bottom: 1rem;
+    right: 1rem;
   }
   .wa-float svg {
-    width: 26px !important;
-    height: 26px !important;
+    width: 26px;
+    height: 26px;
   }
 
   section#servicios > div > div:last-child .tag {
@@ -1422,8 +1560,8 @@ form textarea:focus {
   .btn { padding: var(--space-xs) var(--space-sm); font-size: 0.65rem; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
   .btn-sm { min-height: 36px; padding: var(--space-2xs) var(--space-sm); }
 
-  nav ul { gap: var(--space-2xs); }
-  nav a { font-size: 0.55rem; letter-spacing: 0.05em; }
+  nav ul { gap: var(--space-sm); }
+  nav a { font-size: 0.7rem; letter-spacing: 0.1em; }
 
   form input, form select, form textarea { padding: var(--space-xs); min-height: 44px; }
 
@@ -1528,6 +1666,20 @@ form textarea:focus {
 }
 
 @media (max-width: 480px) {
+  .drawer { padding: var(--space-md) var(--space-sm); }
+  .drawer-header h3 { font-size: 1.5rem; }
+  .drawer-item { padding: 0.5rem 0; }
+  .drawer-item-name { font-size: 0.65rem; }
+  .drawer-item-price { font-size: 0.6rem; }
+  .drawer-total { font-size: 0.85rem; }
+  .drawer-footer .btn { font-size: var(--text-kicker); padding: var(--space-2xs) var(--space-sm); }
+  .drawer-header { margin-bottom: 0.75rem; padding-bottom: 0.5rem; }
+
+  .modal-inner h2 { font-size: 1.5rem; }
+  .modal-inner { padding: var(--space-md) var(--space-xs); }
+  .modal form input, .modal form select { padding: var(--space-2xs); }
+  .booking-total { padding: var(--space-sm); }
+
   .admin-form-panel h3 {
     font-size: 1rem !important;
   }

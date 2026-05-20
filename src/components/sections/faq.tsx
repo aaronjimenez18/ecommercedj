@@ -54,10 +54,10 @@ export default function FAQ() {
       <div className="faq-list">
         {faqs.map((faq, i) => (
           <div key={i} className={`faq-item ${active === i ? 'active' : ''}`}>
-            <div className="faq-q" onClick={() => setActive(active === i ? null : i)}>
+            <button className="faq-q" onClick={() => setActive(active === i ? null : i)} aria-expanded={active === i}>
               <span>{faq.q}</span>
               <span className="icon">+</span>
-            </div>
+            </button>
             <div className="faq-a"><div className="faq-a-inner">{faq.a}</div></div>
           </div>
         ))}

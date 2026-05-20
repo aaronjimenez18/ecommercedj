@@ -7,7 +7,7 @@ export default function PageLoader() {
 
   useEffect(() => {
     const minDisplay = new Promise<void>(resolve =>
-      setTimeout(resolve, 2000)
+      setTimeout(resolve, 800)
     )
     const pageReady = new Promise<void>(resolve => {
       if (document.readyState === 'complete') {

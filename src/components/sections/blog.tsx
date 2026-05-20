@@ -79,7 +79,7 @@ export default function Blog() {
       <div className="blog-grid">
         <article className="blog-card">
           <div className="blog-img">
-            <img src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?q=80&w=800" alt="Disco de vinilo sobre una mesa de mezclas" />
+            <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?q=80&w=800" alt="Disco de vinilo sobre una mesa de mezclas" />
           </div>
           <div className="blog-content">
             <span className="kicker blog-kicker">Tendencias</span>
@@ -93,7 +93,7 @@ export default function Blog() {
 
         <article className="blog-card">
           <div className="blog-img">
-            <img src="https://images.unsplash.com/photo-1514525253361-bee8718a34d1?q=80&w=800" alt="Audiencia bailando en un club nocturno con iluminación robótica" />
+            <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1514525253361-bee8718a34d1?q=80&w=800" alt="Audiencia bailando en un club nocturno con iluminación robótica" />
           </div>
           <div className="blog-content">
             <span className="kicker blog-kicker">Producción</span>

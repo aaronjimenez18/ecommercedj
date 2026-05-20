@@ -95,15 +95,16 @@ export default function CatalogSection({ onCartOpen }: { onCartOpen: () => void 
           <span className="kicker">Muebles & Equipos</span>
           <h2>Catálogo Profesional</h2>
         </div>
-        <div className="filter-nav">
+        <div className="filter-nav" role="group" aria-label="Filtrar por categoría">
           {categories.map(f => (
-            <span
+            <button
               key={f}
               className={filter === f ? 'active' : ''}
               onClick={() => setFilter(f)}
+              aria-pressed={filter === f}
             >
               {label(f)}
-            </span>
+            </button>
           ))}
         </div>
       </div>

@@ -11,7 +11,7 @@ export default function Header({ onCartToggle }: { onCartToggle: () => void }) {
 
   return (
     <header>
-      <div className="logo" onClick={() => window.scrollTo(0, 0)}>GDL.</div>
+      <div className="logo" onClick={() => window.scrollTo(0, 0)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') window.scrollTo(0, 0) }}>GDL.</div>
 
       <button
         className="hamburger"

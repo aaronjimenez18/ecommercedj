@@ -5,8 +5,9 @@ import "./globals.css";
 
 const display = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['400'],
   variable: '--font-display',
+  display: 'optional',
 })
 
 export const metadata: Metadata = {
@@ -22,6 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`h-full ${display.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://images.unsplash.com" />
+      </head>
       <body className="min-h-full flex flex-col">
         <PageLoader />
         {children}
