@@ -7,6 +7,7 @@ export interface Product {
   tag: string | null
   amazon: boolean
   img: string
+  stock: number
 }
 
 export interface CartItem {

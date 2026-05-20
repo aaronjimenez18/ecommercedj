@@ -132,6 +132,17 @@ export default function CatalogSection({ onCartOpen }: { onCartOpen: () => void 
             {product.tag && <span className="tag">{product.tag}</span>}
             <div className="product-img">
               <img src={product.img} alt={product.name} />
+              {product.stock !== undefined && (
+                <span style={{
+                  position: 'absolute', bottom: '8px', left: '8px',
+                  padding: '2px 8px', borderRadius: '4px', fontSize: '0.55rem',
+                  textTransform: 'uppercase', letterSpacing: '0.05em',
+                  background: product.stock > 0 ? 'rgba(59, 206, 127, 0.9)' : 'rgba(255, 59, 127, 0.9)',
+                  color: '#000', fontWeight: 600, zIndex: 2,
+                }}>
+                  {product.stock > 0 ? `${product.stock} en stock` : 'agotado'}
+                </span>
+              )}
             </div>
             <div className="product-info">
               <h3>{product.name}</h3>
@@ -151,14 +162,17 @@ export default function CatalogSection({ onCartOpen }: { onCartOpen: () => void 
                 </a>
               ) : (
                 <button
-                  className="btn btn-sm btn-accent"
+                  className={`btn btn-sm ${product.stock > 0 ? 'btn-accent' : ''}`}
+                  disabled={product.stock === 0}
                   onClick={e => {
                     e.stopPropagation()
+                    if (product.stock === 0) return
                     addItem({ id: product.id, name: product.name, price: product.price })
                     onCartOpen()
                   }}
+                  style={product.stock === 0 ? { borderColor: '#6b6b7b', color: '#6b6b7b', cursor: 'not-allowed' } : {}}
                 >
-                  + CART
+                  {product.stock > 0 ? '+ CART' : 'AGOTADO'}
                 </button>
               )}
             </div>

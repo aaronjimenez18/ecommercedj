@@ -15,13 +15,25 @@ export default function BookingModal({
 }) {
   const [hours, setHours] = useState(5)
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const modalRef = useRef<HTMLDivElement>(null)
 
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [eventDate, setEventDate] = useState('')
+  const [eventType, setEventType] = useState('interior')
+
+  const deposit = 1500
   const extraHours = Math.max(0, hours - 5)
   const total = serviceBase + extraHours * 1200
 
   useEffect(() => {
     if (!open) return
+    setSubmitted(false)
+    setError('')
+    setLoading(false)
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
       if (e.key === 'Tab') {
@@ -46,6 +58,55 @@ export default function BookingModal({
       clearTimeout(timer)
     }
   }, [open, onClose])
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+
+    if (!name || !email || !phone || !eventDate) {
+      setError('Completa todos los campos requeridos')
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const payload = { name, email, phone, eventDate, eventType, hours, total, message: '' }
+      const bookingRes = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (!bookingRes.ok) {
+        const err = await bookingRes.json()
+        throw new Error(err.error || 'Error al crear reserva')
+      }
+
+      const booking = await bookingRes.json()
+
+      const checkoutRes = await fetch('/api/services/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: booking.id,
+          serviceName,
+          total,
+          deposit,
+        }),
+      })
+
+      if (!checkoutRes.ok) {
+        throw new Error('Error al crear sesión de pago')
+      }
+
+      const { url } = await checkoutRes.json()
+      window.location.href = url
+    } catch (err: any) {
+      setError(err.message || 'Error al procesar la reserva')
+      setLoading(false)
+    }
+  }
 
   if (submitted) {
     return (
@@ -74,18 +135,17 @@ export default function BookingModal({
         <span className="kicker">{serviceName}</span>
         <h2>RESERVAR FECHA</h2>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            setSubmitted(true)
-          }}
-        >
+        <form onSubmit={handleSubmit}>
           <div className="booking-grid">
-            <input type="text" placeholder="NOMBRE COMPLETO" required className="span-2" aria-label="Nombre completo" />
-            <input type="email" placeholder="EMAIL" required aria-label="Correo electrónico" />
-            <input type="tel" placeholder="TELÉFONO" required aria-label="Teléfono" />
-            <input type="date" required id="event-date" aria-label="Fecha del evento" />
-            <select id="event-type" aria-label="Tipo de evento">
+            <input type="text" placeholder="NOMBRE COMPLETO" required className="span-2"
+              value={name} onChange={e => setName(e.target.value)} aria-label="Nombre completo" />
+            <input type="email" placeholder="EMAIL" required
+              value={email} onChange={e => setEmail(e.target.value)} aria-label="Correo electrónico" />
+            <input type="tel" placeholder="TELÉFONO" required
+              value={phone} onChange={e => setPhone(e.target.value)} aria-label="Teléfono" />
+            <input type="date" required id="event-date"
+              value={eventDate} onChange={e => setEventDate(e.target.value)} aria-label="Fecha del evento" />
+            <select id="event-type" value={eventType} onChange={e => setEventType(e.target.value)} aria-label="Tipo de evento">
               <option value="interior">EVENTO INTERIOR</option>
               <option value="exterior">EVENTO EXTERIOR</option>
             </select>
@@ -111,9 +171,17 @@ export default function BookingModal({
               <span>ANTICIPO REQUERIDO:</span>
               <span>$1,500</span>
             </div>
+            <div className="booking-total-row">
+              <span>RESTANTE (DÍA DEL EVENTO):</span>
+              <span>${(total - deposit).toLocaleString()}</span>
+            </div>
           </div>
 
-          <button type="submit" className="btn btn-accent btn-full">PAGAR ANTICIPO Y CONFIRMAR</button>
+          {error && <p style={{ color: 'var(--accent)', fontSize: '0.75rem', marginBottom: '1rem' }}>{error}</p>}
+
+          <button type="submit" className="btn btn-accent btn-full" disabled={loading}>
+            {loading ? 'PROCESANDO...' : 'PAGAR ANTICIPO Y CONFIRMAR'}
+          </button>
         </form>
       </div>
     </div>

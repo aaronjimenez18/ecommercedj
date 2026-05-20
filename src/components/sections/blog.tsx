@@ -1,16 +1,42 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
+interface BlogPost {
+  id: number
+  title: string
+  slug: string
+  content: string
+  excerpt: string
+  image: string
+  author: string
+  published: boolean
+  createdAt: string
+}
+
 export default function Blog() {
   const sectionRef = useRef<HTMLElement>(null)
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/blog')
+      .then(r => r.json())
+      .then(data => {
+        const published = data.filter((p: BlogPost) => p.published)
+        setPosts(published)
+        setLoaded(true)
+      })
+      .catch(() => setLoaded(true))
+  }, [])
 
   useGSAP(() => {
+    if (!loaded || posts.length === 0) return
     const section = sectionRef.current
     if (!section) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -66,7 +92,9 @@ export default function Blog() {
         },
       })
     }
-  }, { scope: sectionRef, dependencies: [] })
+  }, { scope: sectionRef, dependencies: [loaded, posts] })
+
+  if (!loaded) return null
 
   return (
     <section ref={sectionRef} id="blog">
@@ -76,35 +104,29 @@ export default function Blog() {
         </div>
       </div>
 
-      <div className="blog-grid">
-        <article className="blog-card">
-          <div className="blog-img">
-            <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?q=80&w=800" alt="Disco de vinilo sobre una mesa de mezclas" />
-          </div>
-          <div className="blog-content">
-            <span className="kicker blog-kicker">Tendencias</span>
-            <h3>El Renacimiento del Vinilo en el 2026</h3>
-            <p className="blog-card-text">
-              Por qué los sets puristas están cobrando más fuerza que nunca en la escena underground.
-            </p>
-            <button className="btn btn-sm blog-btn">Leer Más</button>
-          </div>
-        </article>
-
-        <article className="blog-card">
-          <div className="blog-img">
-            <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1514525253361-bee8718a34d1?q=80&w=800" alt="Audiencia bailando en un club nocturno con iluminación robótica" />
-          </div>
-          <div className="blog-content">
-            <span className="kicker blog-kicker">Producción</span>
-            <h3>Guía: Acústica para tu Home Studio</h3>
-            <p className="blog-card-text">
-              No gastes miles en equipo si tu cuarto no está tratado. Aquí te decimos cómo empezar.
-            </p>
-            <button className="btn btn-sm blog-btn">Leer Más</button>
-          </div>
-        </article>
-      </div>
+      {posts.length === 0 ? (
+        <p style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem', fontSize: '0.8rem' }}>
+          Próximamente...
+        </p>
+      ) : (
+        <div className="blog-grid">
+          {posts.map(p => (
+            <article key={p.id} className="blog-card">
+              {p.image && (
+                <div className="blog-img">
+                  <img loading="lazy" decoding="async" src={p.image} alt={p.title} />
+                </div>
+              )}
+              <div className="blog-content">
+                <span className="kicker blog-kicker">{p.author}</span>
+                <h3>{p.title}</h3>
+                <p className="blog-card-text">{p.excerpt}</p>
+                <button className="btn btn-sm blog-btn">Leer Más</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
 
       <div className="newsletter-box">
         <span className="kicker newsletter-kicker">Exclusivo</span>

@@ -1415,8 +1415,9 @@ form textarea:focus {
     right: -100%;
     width: 100%;
     height: 100vh;
-    background: oklch(0.5% 0.005 275 / 0.95);
+    background: rgba(10, 10, 12, 0.98);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1432,7 +1433,8 @@ form textarea:focus {
   .service-panel { border-right: none; border-bottom: var(--border-width) solid var(--border); }
   .service-panel:last-child { border-right: none; }
   .blog-card { border-right: none; }
-  .drawer { width: 100%; right: -100%; }
+  .drawer { width: 100%; right: -100%; max-width: 100vw; }
+  .drawer.active { right: 0 !important; }
   header { padding: var(--space-sm); }
   nav ul { gap: var(--space-sm); }
   .logo { font-size: 1.8rem; }
@@ -1519,6 +1521,7 @@ form textarea:focus {
   .modal-inner { padding: var(--space-lg) var(--space-sm); }
   .modal-inner h2 { font-size: 2rem; }
   .booking-grid { grid-template-columns: 1fr !important; }
+  .booking-grid > .span-2 { grid-column: span 1 !important; }
   .modal form > div input[style*="gridColumn"],
   .modal form > div input[style*="grid-column"] { grid-column: span 1 !important; }
   .modal form > div > div { grid-column: span 1 !important; flex-direction: column !important; }
@@ -1527,8 +1530,8 @@ form textarea:focus {
   .booking-hours input { width: 100% !important; }
   .modal-inner .btn-full { padding: var(--space-md) var(--space-sm); font-size: var(--text-body-sm); white-space: normal; }
 
-  .loader-3 { width: 7em; }
-  .loader-3 .circle { width: 0.7em; height: 0.7em; }
+  .loader-3 { width: 5em; }
+  .loader-3 .circle { width: 0.5em; height: 0.5em; }
 
   .wa-float {
     width: 52px;
@@ -1713,6 +1716,9 @@ form textarea:focus {
   justify-content: center;
   background: var(--bg);
   transition: opacity 0.5s ease, visibility 0.5s ease;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .loader-3 {

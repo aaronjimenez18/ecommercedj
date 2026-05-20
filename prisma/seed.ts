@@ -50,6 +50,77 @@ async function main() {
   }
 
   console.log(`Seeded ${products.length} products`)
+
+  // Seed services
+  const services = [
+    {
+      name: 'Standard Set',
+      description: 'Servicio DJ Profesional',
+      price: 5500,
+      features: JSON.stringify([
+        'DJ con 10+ años de experiencia',
+        'Sistema de audio (hasta 100 personas)',
+        'Cabina de DJ estética (Brutal Series)',
+        'Micrófono inalámbrico profesional',
+      ]),
+      highlighted: false,
+    },
+    {
+      name: 'Full Experience',
+      description: 'Servicio Premium Gear',
+      price: 7500,
+      features: JSON.stringify([
+        'DJ + Staff de Soporte Técnico',
+        'Audio Reforzado (hasta 250 personas)',
+        'Diseño de Iluminación Robótica & Láser',
+        'Máquina de Humo y Efectos Especiales',
+        'Pirotecnia Fría Controlada',
+      ]),
+      highlighted: true,
+    },
+  ]
+
+  for (const s of services) {
+    const existing = await prisma.service.findFirst({ where: { name: s.name } })
+    if (!existing) {
+      await prisma.service.create({ data: s })
+      console.log(`  Created service: ${s.name}`)
+    } else {
+      console.log(`  Service exists: ${s.name}`)
+    }
+  }
+
+  // Seed blog posts
+  const posts = [
+    {
+      title: 'El Renacimiento del Vinilo en el 2026',
+      slug: 'renacimiento-vinilo-2026',
+      content: 'Por qué los sets puristas están cobrando más fuerza que nunca en la escena underground.',
+      excerpt: 'Por qué los sets puristas están cobrando más fuerza que nunca en la escena underground.',
+      image: 'https://images.unsplash.com/photo-1511735111819-9a3f7709049c?q=80&w=800',
+      author: 'Admin',
+      published: true,
+    },
+    {
+      title: 'Guía: Acústica para tu Home Studio',
+      slug: 'acustica-home-studio',
+      content: 'No gastes miles en equipo si tu cuarto no está tratado. Aquí te decimos cómo empezar.',
+      excerpt: 'No gastes miles en equipo si tu cuarto no está tratado. Aquí te decimos cómo empezar.',
+      image: 'https://images.unsplash.com/photo-1514525253361-bee8718a34d1?q=80&w=800',
+      author: 'Admin',
+      published: true,
+    },
+  ]
+
+  for (const p of posts) {
+    const existing = await prisma.blogPost.findFirst({ where: { slug: p.slug } })
+    if (!existing) {
+      await prisma.blogPost.create({ data: p })
+      console.log(`  Created blog: ${p.title}`)
+    } else {
+      console.log(`  Blog exists: ${p.title}`)
+    }
+  }
 }
 
 main()

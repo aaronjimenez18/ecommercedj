@@ -10,6 +10,7 @@ function toProduct(row: {
   tag: string | null
   amazon: boolean
   img: string
+  stock: number
 }): Product {
   return {
     id: String(row.id),
@@ -20,6 +21,7 @@ function toProduct(row: {
     tag: row.tag,
     amazon: row.amazon,
     img: row.img,
+    stock: row.stock,
   }
 }
 
@@ -43,6 +45,7 @@ export async function createProduct(data: Omit<Product, 'id'>): Promise<Product>
       tag: data.tag,
       img: data.img,
       amazon: data.amazon,
+      stock: data.stock || 0,
     },
   })
   return toProduct(row)
@@ -63,6 +66,7 @@ export async function updateProduct(
         ...(data.tag !== undefined && { tag: data.tag }),
         ...(data.img !== undefined && { img: data.img }),
         ...(data.amazon !== undefined && { amazon: data.amazon }),
+        ...(data.stock !== undefined && { stock: data.stock }),
       },
     })
     return toProduct(row)

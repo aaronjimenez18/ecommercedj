@@ -15,18 +15,23 @@ model Product {
   tag       String?
   img       String
   amazon    Boolean  @default(false)
+  stock     Int      @default(0)
   createdAt DateTime @default(now())
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  stripeId   String?     @unique
-  email      String?
-  total      Float
-  status     String      @default("pending")
-  items      OrderItem[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id              Int         @id @default(autoincrement())
+  stripeId        String?     @unique
+  email           String?
+  customerName    String?
+  customerPhone   String?
+  shippingAddress String?
+  total           Float
+  status          String      @default("pending")
+  tracking        String?
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model OrderItem {
@@ -36,4 +41,42 @@ model OrderItem {
   name     String
   price    Float
   quantity Int     @default(1)
+}
+
+model BlogPost {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  content   String
+  excerpt   String
+  image     String   @default("")
+  author    String   @default("Admin")
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  features    String   @default("[]")
+  highlighted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  eventDate String
+  eventType String
+  hours     Int      @default(5)
+  total     Float
+  message   String   @default("")
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
 }

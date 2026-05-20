@@ -83,6 +83,14 @@ function ProductContent() {
             </div>
             <p className="product-detail-desc">{product.desc}</p>
             <span className="product-detail-price">${product.price.toLocaleString()}</span>
+            {product.stock !== undefined && (
+              <div style={{
+                fontSize: '0.7rem', color: product.stock > 0 ? '#3bce7f' : '#ff3b7f',
+                textTransform: 'uppercase', letterSpacing: '0.05em',
+              }}>
+                {product.stock > 0 ? `${product.stock} en stock` : 'Producto agotado'}
+              </div>
+            )}
             {product.amazon ? (
               <a
                 href="https://amazon.com"
@@ -95,14 +103,16 @@ function ProductContent() {
               </a>
             ) : (
               <button
-                className="btn btn-accent"
-                style={{ textAlign: 'center' }}
+                className={`btn ${product.stock > 0 ? 'btn-accent' : ''}`}
+                style={{ textAlign: 'center', ...(product.stock === 0 ? { borderColor: '#6b6b7b', color: '#6b6b7b', cursor: 'not-allowed' } : {}) }}
+                disabled={product.stock === 0}
                 onClick={() => {
+                  if (product.stock === 0) return
                   addItem({ id: product.id, name: product.name, price: product.price })
                   setCartOpen(true)
                 }}
               >
-                AGREGAR AL CARRITO
+                {product.stock > 0 ? 'AGREGAR AL CARRITO' : 'AGOTADO'}
               </button>
             )}
           </div>

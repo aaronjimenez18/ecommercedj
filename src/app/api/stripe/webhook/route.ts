@@ -65,6 +65,20 @@ export async function POST(request: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object
 
+        // Service booking payment
+        if (session.metadata?.type === 'service_booking') {
+          const bookingId = Number(session.metadata.bookingId)
+          if (bookingId) {
+            await prisma.booking.update({
+              where: { id: bookingId },
+              data: { status: 'confirmed' },
+            })
+            console.log('Booking confirmed:', bookingId)
+          }
+          break
+        }
+
+        // Product order
         const metadataItems = session.metadata?.items
         if (!metadataItems) {
           console.log('No items metadata in session', session.id)
