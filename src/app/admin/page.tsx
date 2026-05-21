@@ -103,6 +103,18 @@ function slugify(text: string) {
   return text.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
+const statusLabels: Record<string, string> = {
+  pending: 'Pendiente',
+  paid: 'Pagado',
+  completed: 'Completado',
+  shipped: 'Enviado',
+  delivered: 'Entregado',
+  cancelled: 'Cancelado',
+  confirmed: 'Confirmado',
+}
+
+function tStatus(s: string) { return statusLabels[s] || s }
+
 const sections: { id: Section; label: string}[] = [
   { id: 'dashboard', label: 'Dashboard',  },
   { id: 'products', label: 'Productos',  },
@@ -482,7 +494,7 @@ function DashboardView({ stats, orders, productsCount }: { stats: DashboardStats
                         textTransform: 'uppercase', letterSpacing: '0.05em',
                         background: o.status === 'completed' ? '#1a3a2a' : o.status === 'pending' ? '#3a2a1a' : '#1e1e20',
                         color: o.status === 'completed' ? '#3bce7f' : o.status === 'pending' ? '#ffab3b' : '#6b6b7b',
-                      }}>{o.status}</span>
+                      }}>{tStatus(o.status)}</span>
                     </td>
                     <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', color: '#6b6b7b' }}>{new Date(o.createdAt).toLocaleDateString()}</td>
                   </tr>
@@ -627,7 +639,7 @@ function OrdersView({ orders }: { orders: Order[] }) {
                         padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.6rem',
                         textTransform: 'uppercase', letterSpacing: '0.05em',
                         background: `#1a1a1d`, color: statusColors[o.status] || '#6b6b7b',
-                      }}>{o.status}</span>
+                      }}>{tStatus(o.status)}</span>
                     </td>
                     <td style={{ padding: '0.75rem 0.5rem' }}>
                       {o.items.map(item => (
@@ -669,11 +681,11 @@ function OrdersView({ orders }: { orders: Order[] }) {
               width: '100%', background: '#0a0a0c', border: '1px solid #1e1e20', borderRadius: '6px',
               padding: '0.6rem', color: '#e8e8ed', fontFamily: 'inherit', fontSize: '0.75rem', outline: 'none',
             }}>
-              <option value="pending">Pendiente</option>
-              <option value="paid">Pagado</option>
-              <option value="shipped">Enviado</option>
-              <option value="delivered">Entregado</option>
-              <option value="cancelled">Cancelado</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="pagado">Pagado</option>
+              <option value="enviado">Enviado</option>
+              <option value="entregado">Entregado</option>
+              <option value="cancelado">Cancelado</option>
             </select>
           </div>
 
@@ -758,7 +770,7 @@ function CustomersView({ customers }: { customers: Customer[] }) {
                     <div key={o.id} style={{ border: '1px solid #161618', borderRadius: '6px', padding: '0.5rem', marginBottom: '0.4rem', fontSize: '0.65rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span>#{o.id} · ${o.total.toLocaleString()}</span>
-                        <span style={{ color: '#ffab3b' }}>{o.status}</span>
+                        <span style={{ color: '#ffab3b' }}>{tStatus(o.status)}</span>
                       </div>
                       <div style={{ color: '#6b6b7b', fontSize: '0.6rem', marginTop: '0.15rem' }}>
                         {o.items.map(i => `${i.name} × ${i.quantity}`).join(', ')}
@@ -777,7 +789,7 @@ function CustomersView({ customers }: { customers: Customer[] }) {
                     <div key={b.id} style={{ border: '1px solid #161618', borderRadius: '6px', padding: '0.5rem', marginBottom: '0.4rem', fontSize: '0.65rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span>{b.eventDate} · {b.eventType}</span>
-                        <span style={{ color: b.status === 'confirmed' ? '#3bce7f' : '#ffab3b' }}>{b.status}</span>
+                        <span style={{ color: b.status === 'confirmed' ? '#3bce7f' : '#ffab3b' }}>{tStatus(b.status)}</span>
                       </div>
                       <div style={{ color: '#6b6b7b', fontSize: '0.6rem' }}>${b.total.toLocaleString()} · {b.hours}h</div>
                     </div>
@@ -1026,7 +1038,7 @@ function BookingsView({ bookings }: { bookings: Booking[] }) {
                   padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.6rem',
                   background: selectedBooking.status === 'confirmed' ? '#1a3a2a' : '#3a2a1a',
                   color: selectedBooking.status === 'confirmed' ? '#3bce7f' : '#ffab3b',
-                }}>{selectedBooking.status}</span>
+                }}>{tStatus(selectedBooking.status)}</span>
               </div>
               {selectedBooking.message && <div><span style={{ color: '#6b6b7b' }}>Mensaje: </span>{selectedBooking.message}</div>}
             </div>
@@ -1055,7 +1067,7 @@ function BookingsView({ bookings }: { bookings: Booking[] }) {
                       padding: '0.1rem 0.35rem', borderRadius: '3px', fontSize: '0.55rem',
                       background: b.status === 'confirmed' ? '#1a3a2a' : '#3a2a1a',
                       color: b.status === 'confirmed' ? '#3bce7f' : '#ffab3b',
-                    }}>{b.status}</span>
+                    }}>{tStatus(b.status)}</span>
                   </div>
                   <div style={{ color: '#6b6b7b', fontSize: '0.6rem', marginTop: '0.2rem' }}>{b.eventDate} · ${b.total.toLocaleString()}</div>
                 </div>

@@ -18,7 +18,7 @@ export function createClient(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) =>
-            cookiesToApply.push({ name, value, options: options as any })
+            cookiesToApply.push({ name, value, options: options ?? {} })
           )
         },
       },

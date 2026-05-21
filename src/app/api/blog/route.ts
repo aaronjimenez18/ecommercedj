@@ -39,8 +39,9 @@ export async function POST(request: NextRequest) {
       },
     })
     return NextResponse.json(post, { status: 201 })
-  } catch (e: any) {
-    if (e?.code === 'P2002') {
+  } catch (e: unknown) {
+    const prismaErr = e as { code?: string }
+    if (prismaErr?.code === 'P2002') {
       return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     }
     return NextResponse.json({ error: 'Invalid data' }, { status: 400 })

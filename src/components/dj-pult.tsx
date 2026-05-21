@@ -54,12 +54,18 @@ function Model({ spinRef, onReady }: { spinRef?: { current: number }; onReady?: 
     }
     window.addEventListener("mousemove", onMouse, { passive: true })
 
-    requestAnimationFrame(() => {
-      if (!readyFired.current) {
-        readyFired.current = true
-        onReady?.()
+    let frame = 0
+    function checkReady() {
+      if (frame++ >= 2) {
+        if (!readyFired.current) {
+          readyFired.current = true
+          onReady?.()
+        }
+        return
       }
-    })
+      requestAnimationFrame(checkReady)
+    }
+    requestAnimationFrame(checkReady)
 
     return () => window.removeEventListener("mousemove", onMouse)
   }, [onReady])
@@ -127,7 +133,7 @@ export default function DJPult3D({ spinRef, onReady }: { spinRef?: { current: nu
         <spotLight position={[0, 8, 0]} intensity={0.3} angle={0.5} penumbra={0.5} />
         <Model spinRef={spinRef} onReady={onReady} />
         <ContactShadows position={[0, -1.2, 0]} opacity={0.45} scale={5} blur={2.5} far={3} />
-        <Environment preset="studio" />
+        <Environment files="/models/studio_small_03_1k.hdr" />
       </Suspense>
     </Canvas>
   )

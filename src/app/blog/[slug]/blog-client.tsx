@@ -28,7 +28,6 @@ function BlogContent({ initialPost, slug }: { initialPost: BlogPost | null; slug
 
   useEffect(() => {
     if (initialPost) return
-    setLoading(true)
     fetch(`/api/blog?slug=${slug}`)
       .then(async res => {
         if (!res.ok) { setNotFound(true); setLoading(false); return null }

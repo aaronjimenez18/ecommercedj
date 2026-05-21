@@ -14,7 +14,6 @@ export default function BookingModal({
   onClose: () => void
 }) {
   const [hours, setHours] = useState(5)
-  const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const modalRef = useRef<HTMLDivElement>(null)
@@ -31,9 +30,6 @@ export default function BookingModal({
 
   useEffect(() => {
     if (!open) return
-    setSubmitted(false)
-    setError('')
-    setLoading(false)
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
       if (e.key === 'Tab') {
@@ -102,28 +98,11 @@ export default function BookingModal({
 
       const { url } = await checkoutRes.json()
       window.location.href = url
-    } catch (err: any) {
-      setError(err.message || 'Error al procesar la reserva')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al procesar la reserva'
+      setError(msg)
       setLoading(false)
     }
-  }
-
-  if (submitted) {
-    return (
-      <div className={`modal ${open ? 'active' : ''}`} role="dialog" aria-modal="true" aria-label="Reserva confirmada" ref={modalRef}>
-        <div className="modal-inner" style={{ textAlign: 'center' }}>
-          <button onClick={onClose} className="modal-close" aria-label="Cerrar modal">
-            [CERRAR]
-          </button>
-          <span className="kicker">SOLICITUD ENVIADA</span>
-          <h2 style={{ marginBottom: 'var(--space-lg)' }}>RESERVA CONFIRMADA</h2>
-          <p style={{ color: 'var(--muted)', maxWidth: '45ch', margin: '0 auto var(--space-lg)', lineHeight: 1.7 }}>
-            Redirigiendo a pasarela de pago para el anticipo de $1,500.
-          </p>
-          <button className="btn" onClick={onClose}>CERRAR</button>
-        </div>
-      </div>
-    )
   }
 
   return (

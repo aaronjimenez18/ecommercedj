@@ -4,10 +4,10 @@ const csp = `
   default-src 'self';
   base-uri 'self';
   form-action 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://js.stripe.com;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://js.stripe.com https://www.gstatic.com;
   style-src 'self' 'unsafe-inline';
   img-src 'self' https://images.unsplash.com https://*.supabase.co data: blob:;
-  connect-src 'self' https://*.supabase.co https://api.stripe.com https://www.google-analytics.com https://www.googletagmanager.com;
+  connect-src 'self' blob: https://*.supabase.co https://api.stripe.com https://www.google-analytics.com https://www.googletagmanager.com https://raw.githubusercontent.com https://www.gstatic.com;
   frame-src https://js.stripe.com;
   font-src 'self' data:;
 `

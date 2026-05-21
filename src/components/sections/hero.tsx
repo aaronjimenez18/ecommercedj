@@ -48,6 +48,7 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
       setIntroDone(true)
       onIntroTextReady?.()
       ScrollTrigger.refresh()
+      requestAnimationFrame(() => ScrollTrigger.refresh())
     })
   }, { scope: sectionRef, dependencies: [modelReady], revertOnUpdate: true })
 
@@ -104,7 +105,7 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
       })
     }
 
-    ScrollTrigger.refresh()
+    requestAnimationFrame(() => ScrollTrigger.refresh())
   }, { scope: sectionRef, dependencies: [introDone], revertOnUpdate: true })
 
   return (

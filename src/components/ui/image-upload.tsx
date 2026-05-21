@@ -41,8 +41,9 @@ export default function ImageUpload({
 
       setPreview(data.url)
       onUpload(data.url)
-    } catch (err: any) {
-      setError(err.message || 'Error al subir la imagen')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al subir la imagen'
+      setError(msg)
     } finally {
       setUploading(false)
       if (inputRef.current) inputRef.current.value = ''
