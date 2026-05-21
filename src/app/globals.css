@@ -1144,6 +1144,10 @@ form textarea:focus {
 
 .footer-social a:hover { color: var(--fg); }
 
+.footer-social .social-instagram:hover { color: #E4405F; }
+.footer-social .social-youtube:hover { color: #FF0000; }
+.footer-social .social-tiktok:hover { color: #00F2EA; }
+
 .footer-contact {
   font-size: 0.75rem;
   color: var(--fg-dim);
@@ -1269,6 +1273,74 @@ form textarea:focus {
 
 .newsletter-form button {
   white-space: nowrap;
+}
+
+/* ── Legal Pages (Cookies, Términos, Privacidad) ── */
+.legal-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-4xl) var(--space-xl);
+}
+
+.legal-page h1 {
+  margin-bottom: var(--space-xl);
+}
+
+.legal-page h2 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.legal-page h3 {
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-sm);
+  font-size: var(--text-title);
+}
+
+.legal-page p,
+.legal-page li {
+  color: var(--fg-dim);
+  line-height: 1.8;
+  max-width: 70ch;
+}
+
+.legal-page ul {
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.legal-page li {
+  margin-bottom: var(--space-2xs);
+}
+
+.legal-page code {
+  font-size: 0.8em;
+  background: var(--surface);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.legal-date {
+  margin-top: var(--space-2xl);
+  font-size: var(--text-body-sm);
+  color: var(--muted);
+  font-style: italic;
+}
+
+.legal-back {
+  display: inline-block;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--text-body-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color var(--transition-fast);
+  margin-bottom: var(--space-lg);
+}
+
+.legal-back:hover {
+  color: var(--fg);
 }
 
 /* ── Payment Pages ── */
