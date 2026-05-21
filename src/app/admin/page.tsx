@@ -103,14 +103,14 @@ function slugify(text: string) {
   return text.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
-const sections: { id: Section; label: string; icon: string }[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: '◈' },
-  { id: 'products', label: 'Productos', icon: '◉' },
-  { id: 'orders', label: 'Pedidos', icon: '◎' },
-  { id: 'customers', label: 'Clientes', icon: '♛' },
-  { id: 'services', label: 'Servicios', icon: '◇' },
-  { id: 'blog', label: 'Blog', icon: '○' },
-  { id: 'bookings', label: 'Reservas', icon: '□' },
+const sections: { id: Section; label: string}[] = [
+  { id: 'dashboard', label: 'Dashboard',  },
+  { id: 'products', label: 'Productos',  },
+  { id: 'orders', label: 'Pedidos',  },
+  { id: 'customers', label: 'Clientes', },
+  { id: 'services', label: 'Servicios',  },
+  { id: 'blog', label: 'Blog',  },
+  { id: 'bookings', label: 'Reservas',  },
 ]
 
 export default function AdminPage() {
@@ -292,7 +292,7 @@ export default function AdminPage() {
   if (!user) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--fg)', fontFamily: 'var(--font-mono)' }}>
-        <form onSubmit={handleLogin} style={{ border: 'var(--border-width) solid var(--border)', borderRadius: 'var(--radius-md)', padding: '4rem', maxWidth: '400px', width: '100%' }}>
+        <form onSubmit={handleLogin} className="admin-login-form" style={{ border: 'var(--border-width) solid var(--border)', borderRadius: 'var(--radius-md)', padding: '4rem', maxWidth: '400px', width: '100%' }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginBottom: '2rem', textAlign: 'center', textTransform: 'uppercase' }}>Admin GDL</h2>
           <input type="email" placeholder="CORREO" value={email} onChange={e => setEmail(e.target.value)} required autoFocus
             style={{ width: '100%', background: 'transparent', border: 'var(--border-width) solid var(--border)', padding: '1.2rem', color: 'var(--fg)', fontFamily: 'var(--font-mono)', outline: 'none', marginBottom: '1rem' }} />
@@ -306,10 +306,10 @@ export default function AdminPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0c', color: '#e8e8ed', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex' }}>
+    <div className="admin-shell" style={{ background: '#0a0a0c', color: '#e8e8ed', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex' }}>
       {/* Sidebar */}
       <aside className={sidebarOpen ? 'admin-sidebar open' : 'admin-sidebar'} style={{
-        width: '260px', minHeight: '100vh', background: '#111113', borderRight: '1px solid #1e1e20',
+        width: '260px', background: '#111113', borderRight: '1px solid #1e1e20',
         display: 'flex', flexDirection: 'column', position: 'fixed', left: 0, top: 0, zIndex: 100,
       }}>
         <div style={{ padding: '1.5rem', borderBottom: '1px solid #1e1e20' }}>
@@ -327,8 +327,7 @@ export default function AdminPage() {
                 textTransform: 'uppercase', borderLeft: section === s.id ? '2px solid #ff3b7f' : '2px solid transparent',
                 transition: 'all 0.15s ease',
               }}>
-              <span style={{ fontSize: '0.9rem' }}>{s.icon}</span>
-              {s.label}
+                {s.label}
             </button>
           ))}
         </nav>
@@ -345,7 +344,7 @@ export default function AdminPage() {
       )}
 
       {/* Main Content */}
-      <main style={{ flex: 1, marginLeft: '260px', minHeight: '100vh', position: 'relative' }}>
+      <main style={{ flex: 1, marginLeft: '260px', position: 'relative' }}>
         {/* Top bar */}
         <header style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -354,6 +353,7 @@ export default function AdminPage() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="admin-hamburger"
               style={{ background: 'none', border: 'none', color: '#6b6b7b', cursor: 'pointer', fontSize: '1.2rem', display: 'none', padding: '0.25rem' }}>
               ☰
             </button>
@@ -364,7 +364,7 @@ export default function AdminPage() {
           <div style={{ fontSize: '0.7rem', color: '#6b6b7b' }}>{user.email}</div>
         </header>
 
-        <div style={{ padding: '2rem' }}>
+        <div className="admin-content" style={{ padding: '2rem' }}>
           {section === 'dashboard' && <DashboardView stats={stats} orders={orders} productsCount={products.length} />}
           {section === 'products' && <ProductsView
             products={products} form={productForm} setForm={setProductForm}
@@ -387,13 +387,45 @@ export default function AdminPage() {
         </div>
       </main>
 
-      {/* Responsive sidebar button */}
       <style>{`
+        .admin-shell { min-height: 100vh; min-height: 100dvh; }
+        .admin-sidebar { min-height: 100vh; min-height: 100dvh; }
+        main { min-height: 100vh; min-height: 100dvh; }
+
+        .admin-calendar { overflow-x: auto; }
+        .admin-calendar-grid { min-width: 560px; }
+        .admin-booking-list { max-height: 400px; overflow-y: auto; }
+
         @media (max-width: 768px) {
-          aside { transform: translateX(-100%); }
-          aside.open { transform: translateX(0); }
+          .admin-sidebar { transform: translateX(-100%); }
+          .admin-sidebar.open { transform: translateX(0); }
           main { margin-left: 0 !important; }
-          header button { display: block !important; }
+          .admin-hamburger { display: flex !important; }
+          .admin-grid-2 { grid-template-columns: 1fr !important; }
+          .admin-grid-side { grid-template-columns: 1fr !important; }
+          .admin-content { padding: 1rem 1rem 6rem !important; }
+          .admin-panel { padding: 1rem !important; }
+          header > div:last-child { display: none !important; }
+          .admin-login-form { padding: 2rem 1.5rem !important; }
+          .admin-calendar-day { min-height: 60px !important; }
+          .admin-booking-list { max-height: 250px !important; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .admin-grid-side { grid-template-columns: 1fr !important; }
+          .admin-grid-2 { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 600px) {
+          .admin-content { padding: 0.75rem 0.75rem 5rem !important; }
+          .admin-panel { padding: 0.75rem !important; }
+          .admin-form-grid { grid-template-columns: 1fr !important; }
+          .admin-calendar-day { min-height: 50px !important; }
+          .admin-booking-list { max-height: 200px !important; }
+        }
+        @media (max-width: 400px) {
+          .admin-calendar-grid { min-width: 0; }
+          .admin-calendar-grid { grid-template-columns: repeat(7, minmax(0, 1fr)) !important; }
+          .admin-calendar-day { min-height: 40px !important; padding: 2px !important; }
+          .admin-calendar-day div:first-child { font-size: 0.5rem !important; }
         }
       `}</style>
     </div>
@@ -471,22 +503,22 @@ function ProductsView({ products, form, setForm, editingId, onSubmit, onEdit, on
   onEdit: (p: Product) => void; onDelete: (id: string) => void; onReset: () => void
 }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '1.5rem', alignItems: 'start' }}>
-      <div style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
+    <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="admin-panel" style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
         <h3 style={{ fontSize: '0.8rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', color: '#e8e8ed' }}>
           {editingId ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO'}
         </h3>
         <form onSubmit={onSubmit}>
           <input placeholder="NOMBRE" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required style={inputStyle} />
           <textarea placeholder="DESCRIPCIÓN" value={form.desc} onChange={e => setForm({ ...form, desc: e.target.value })} required style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+          <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
             <input type="number" placeholder="PRECIO" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} required style={inputStyle} />
             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value as ProductForm['category'] })} style={inputStyle}>
               {categories.map(c => <option key={c} value={c}>{c.toUpperCase()}</option>)}
             </select>
           </div>
           <input placeholder="TAG (opcional)" value={form.tag} onChange={e => setForm({ ...form, tag: e.target.value })} style={inputStyle} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+          <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
             <ImageUpload currentUrl={form.img} onUpload={url => setForm({ ...form, img: url })} folder="products" />
             <input type="number" placeholder="STOCK" value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} style={inputStyle} />
           </div>
@@ -563,10 +595,10 @@ function OrdersView({ orders }: { orders: Order[] }) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 340px' : '1fr', gap: '1.5rem', alignItems: 'start' }}>
-      <div style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
+    <div className="admin-grid-side" style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 340px' : '1fr', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="admin-panel" style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
         <h3 style={{ fontSize: '0.8rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', color: '#e8e8ed' }}>
-          Todos los Pedidos ({orders.length})
+          {selected ? `ORDEN #${String(selected.id).slice(-6)}` : 'ÓRDENES'} ({orders.length})
         </h3>
         {orders.length === 0 ? (
           <p style={{ color: '#6b6b7b', textAlign: 'center', padding: '3rem', fontSize: '0.8rem' }}>No hay pedidos</p>
@@ -677,8 +709,8 @@ function CustomersView({ customers }: { customers: Customer[] }) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 380px' : '1fr', gap: '1.5rem', alignItems: 'start' }}>
-      <div style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
+    <div className="admin-grid-side" style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 380px' : '1fr', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="admin-panel" style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
         <h3 style={{ fontSize: '0.8rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', color: '#e8e8ed' }}>
           Clientes ({customers.length})
         </h3>
@@ -767,8 +799,8 @@ function ServicesView({ services, form, setForm, editingId, onSubmit, onEdit, on
   onEdit: (s: ServiceItem) => void; onDelete: (id: number) => void; onReset: () => void
 }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '1.5rem', alignItems: 'start' }}>
-      <div style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
+    <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="admin-panel" style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
         <h3 style={{ fontSize: '0.8rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', color: '#e8e8ed' }}>
           {editingId ? 'EDITAR SERVICIO' : 'NUEVO SERVICIO'}
         </h3>
@@ -823,8 +855,8 @@ function BlogView({ posts, form, setForm, editingId, onSubmit, onEdit, onDelete,
   onEdit: (p: BlogPost) => void; onDelete: (id: number) => void; onReset: () => void
 }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '450px 1fr', gap: '1.5rem', alignItems: 'start' }}>
-      <div style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
+    <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '450px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="admin-panel" style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
         <h3 style={{ fontSize: '0.8rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', color: '#e8e8ed' }}>
           {editingId ? 'EDITAR POST' : 'NUEVO POST'}
         </h3>
@@ -918,54 +950,56 @@ function BookingsView({ bookings }: { bookings: Booking[] }) {
   const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb']
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '1.5rem', alignItems: 'start' }}>
+    <div className="admin-grid-side" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '1.5rem', alignItems: 'start' }}>
       {/* Calendar */}
-      <div style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
+      <div className="admin-panel" style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <button onClick={prevMonth} style={{ background: 'none', border: '1px solid #2a2a2d', color: '#6b6b7b', padding: '0.4rem 0.8rem', cursor: 'pointer', borderRadius: '6px', fontSize: '0.75rem' }}>←</button>
           <h3 style={{ fontSize: '1rem', fontWeight: 500, color: '#e8e8ed' }}>{months[currentMonth]} {currentYear}</h3>
           <button onClick={nextMonth} style={{ background: 'none', border: '1px solid #2a2a2d', color: '#6b6b7b', padding: '0.4rem 0.8rem', cursor: 'pointer', borderRadius: '6px', fontSize: '0.75rem' }}>→</button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', marginBottom: '2px' }}>
-          {dayNames.map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', color: '#6b6b7b', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0.5rem 0' }}>{d}</div>
-          ))}
-        </div>
+        <div className="admin-calendar">
+          <div className="admin-calendar-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', marginBottom: '2px' }}>
+            {dayNames.map(d => (
+              <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', color: '#6b6b7b', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0.5rem 0' }}>{d}</div>
+            ))}
+          </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
-          {Array.from({ length: firstDayOfWeek }).map((_, i) => (
-            <div key={`empty-${i}`} />
-          ))}
-          {Array.from({ length: daysInMonth }).map((_, i) => {
-            const day = i + 1
-            const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-            const dayBookings = bookingsByDate[dateStr] || []
-            const isToday = isCurrentMonth && day === today.getDate()
+          <div className="admin-calendar-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
+            {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+              <div key={`empty-${i}`} />
+            ))}
+            {Array.from({ length: daysInMonth }).map((_, i) => {
+              const day = i + 1
+              const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+              const dayBookings = bookingsByDate[dateStr] || []
+              const isToday = isCurrentMonth && day === today.getDate()
 
-            return (
-              <div key={day} style={{
-                minHeight: '80px', border: '1px solid #161618', borderRadius: '6px', padding: '4px',
-                background: isToday ? '#1a1a2a' : 'transparent',
-                borderColor: isToday ? '#ff3b7f' : '#161618',
-              }}>
-                <div style={{ fontSize: '0.65rem', color: isToday ? '#ff3b7f' : '#6b6b7b', marginBottom: '2px', fontWeight: isToday ? 600 : 400 }}>{day}</div>
-                {dayBookings.slice(0, 2).map(b => (
-                  <div key={b.id} onClick={() => setSelectedBooking(b)}
-                    style={{
-                      fontSize: '0.55rem', padding: '2px 4px', borderRadius: '3px', marginBottom: '1px', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                      background: b.status === 'confirmed' ? '#1a3a2a' : '#3a2a1a',
-                      color: b.status === 'confirmed' ? '#3bce7f' : '#ffab3b',
-                    }}>
-                    {b.name}
-                  </div>
-                ))}
-                {dayBookings.length > 2 && (
-                  <div style={{ fontSize: '0.5rem', color: '#6b6b7b', textAlign: 'center' }}>+{dayBookings.length - 2}</div>
-                )}
-              </div>
-            )
-          })}
+              return (
+                <div key={day} className="admin-calendar-day" style={{
+                  minHeight: '80px', border: '1px solid #161618', borderRadius: '6px', padding: '4px',
+                  background: isToday ? '#1a1a2a' : 'transparent',
+                  borderColor: isToday ? '#ff3b7f' : '#161618',
+                }}>
+                  <div style={{ fontSize: '0.65rem', color: isToday ? '#ff3b7f' : '#6b6b7b', marginBottom: '2px', fontWeight: isToday ? 600 : 400 }}>{day}</div>
+                  {dayBookings.slice(0, 2).map(b => (
+                    <div key={b.id} onClick={() => setSelectedBooking(b)}
+                      style={{
+                        fontSize: '0.55rem', padding: '2px 4px', borderRadius: '3px', marginBottom: '1px', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        background: b.status === 'confirmed' ? '#1a3a2a' : '#3a2a1a',
+                        color: b.status === 'confirmed' ? '#3bce7f' : '#ffab3b',
+                      }}>
+                      {b.name}
+                    </div>
+                  ))}
+                  {dayBookings.length > 2 && (
+                    <div style={{ fontSize: '0.5rem', color: '#6b6b7b', textAlign: 'center' }}>+{dayBookings.length - 2}</div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
 
@@ -1000,7 +1034,7 @@ function BookingsView({ bookings }: { bookings: Booking[] }) {
         )}
 
         {/* All bookings list */}
-        <div style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem', maxHeight: '400px', overflowY: 'auto' }}>
+        <div className="admin-booking-list" style={{ background: '#111113', border: '1px solid #1e1e20', borderRadius: '12px', padding: '1.5rem' }}>
           <h3 style={{ fontSize: '0.8rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem', color: '#e8e8ed' }}>
             Todas las Reservas ({bookings.length})
           </h3>

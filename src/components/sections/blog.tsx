@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -121,7 +122,7 @@ export default function Blog() {
                 <span className="kicker blog-kicker">{p.author}</span>
                 <h3>{p.title}</h3>
                 <p className="blog-card-text">{p.excerpt}</p>
-                <button className="btn btn-sm blog-btn">Leer Más</button>
+                <Link href={`/blog/${p.slug}`} className="btn btn-sm blog-btn">Leer Más</Link>
               </div>
             </article>
           ))}

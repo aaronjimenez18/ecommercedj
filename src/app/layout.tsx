@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond } from 'next/font/google'
-import PageLoader from '@/components/ui/page-loader'
+import ScrollToTop from '@/components/ui/scroll-to-top'
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -27,7 +27,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://images.unsplash.com" />
       </head>
       <body className="min-h-full flex flex-col">
-        <PageLoader />
+        <ScrollToTop />
         {children}
       </body>
     </html>

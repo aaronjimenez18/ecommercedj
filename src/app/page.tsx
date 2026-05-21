@@ -20,6 +20,7 @@ import CartDrawer from '@/components/modals/cart-drawer'
 import BookingModal from '@/components/modals/booking-modal'
 import WhatsAppFloat from '@/components/layout/whats-app-float'
 import Overlay from '@/components/ui/overlay'
+import PageLoader from '@/components/ui/page-loader'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
@@ -111,6 +112,8 @@ function HomePage() {
 
   return (
     <>
+      <PageLoader />
+
       <Overlay open={cartOpen || bookingOpen} onClose={closeAll} />
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
