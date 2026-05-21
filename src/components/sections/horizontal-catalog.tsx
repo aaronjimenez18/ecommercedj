@@ -7,6 +7,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useCart } from '@/lib/store/cart-context'
+import { useLoading } from '@/lib/store/loading-context'
 import type { Product } from '@/types'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -17,11 +18,17 @@ export default function CatalogSection({ onCartOpen }: { onCartOpen: () => void 
   const [products, setProducts] = useState<Product[]>([])
   const [filter, setFilter] = useState('all')
   const { addItem } = useCart()
+  const { registerLoading, unregisterLoading } = useLoading()
 
   useEffect(() => {
+    registerLoading('catalog')
     fetch('/api/products')
       .then(res => res.json())
-      .then(setProducts)
+      .then(data => {
+        setProducts(data)
+        unregisterLoading('catalog')
+      })
+      .catch(() => unregisterLoading('catalog'))
   }, [])
 
   const categories = ['all', ...new Set(products.map(p => p.category))]

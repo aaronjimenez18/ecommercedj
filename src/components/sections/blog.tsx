@@ -6,6 +6,7 @@ import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { useLoading } from '@/lib/store/loading-context'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
@@ -25,16 +26,22 @@ export default function Blog() {
   const sectionRef = useRef<HTMLElement>(null)
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loaded, setLoaded] = useState(false)
+  const { registerLoading, unregisterLoading } = useLoading()
 
   useEffect(() => {
+    registerLoading('blog')
     fetch('/api/blog')
       .then(r => r.json())
       .then(data => {
         const published = data.filter((p: BlogPost) => p.published)
         setPosts(published)
         setLoaded(true)
+        unregisterLoading('blog')
       })
-      .catch(() => setLoaded(true))
+      .catch(() => {
+        setLoaded(true)
+        unregisterLoading('blog')
+      })
   }, [])
 
   useGSAP(() => {

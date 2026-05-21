@@ -37,24 +37,6 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
     gsap.set(".hero-kicker, .hero-line, .hero-desc", { y: 16, autoAlpha: 0 })
     gsap.set(".hero-scroll-hint", { autoAlpha: 0, y: 8 })
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
-
-    tl.to(modelAnimRef.current, { scale: 1, rotation: 0, duration: 0.6 })
-    tl.to(".hero-kicker", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.2")
-    tl.to(".hero-line", { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08 }, "-=0.15")
-    tl.to(".hero-desc", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.15")
-    tl.to(".hero-scroll-hint", { autoAlpha: 1, y: 0, duration: 0.6 }, "+=0.3")
-    tl.call(() => {
-      setIntroDone(true)
-      onIntroTextReady?.()
-      ScrollTrigger.refresh()
-      requestAnimationFrame(() => ScrollTrigger.refresh())
-    })
-  }, { scope: sectionRef, dependencies: [modelReady], revertOnUpdate: true })
-
-  useGSAP(() => {
-    if (!introDone) return
-
     gsap.to(spinRef, {
       current: Math.PI * 2,
       ease: "none",
@@ -63,33 +45,36 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
         start: "top top",
         end: "bottom top",
         scrub: 1,
-        refreshPriority: 0,
       },
     })
 
-    gsap.to(modelAnimRef.current, {
-      opacity: 0.15,
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1,
-        refreshPriority: 0,
-      },
-    })
+    gsap.fromTo(modelAnimRef.current,
+      { opacity: 1 },
+      {
+        opacity: 0.15,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      }
+    )
 
-    gsap.to(".hero-kicker, .hero-line, .hero-desc, .hero-scroll-hint", {
-      opacity: 0.3,
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1,
-        refreshPriority: 0,
-      },
-    })
+    gsap.fromTo(".hero-kicker, .hero-line, .hero-desc, .hero-scroll-hint",
+      { opacity: 1 },
+      {
+        opacity: 0.3,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      }
+    )
 
     if (modelParallaxRef.current) {
       gsap.to(modelParallaxRef.current, {
@@ -100,13 +85,24 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
           start: "top top",
           end: "bottom top",
           scrub: 1,
-          refreshPriority: 0,
         },
       })
     }
 
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
+
+    tl.to(modelAnimRef.current, { scale: 1, rotation: 0, duration: 0.6 })
+    tl.to(".hero-kicker", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.2")
+    tl.to(".hero-line", { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08 }, "-=0.15")
+    tl.to(".hero-desc", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.15")
+    tl.to(".hero-scroll-hint", { autoAlpha: 1, y: 0, duration: 0.6 }, "+=0.3")
+    tl.call(() => {
+      setIntroDone(true)
+      onIntroTextReady?.()
+    })
+
     requestAnimationFrame(() => ScrollTrigger.refresh())
-  }, { scope: sectionRef, dependencies: [introDone], revertOnUpdate: true })
+  }, { scope: sectionRef, dependencies: [modelReady], revertOnUpdate: true })
 
   return (
     <section className="hero" id="inicio"

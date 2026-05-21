@@ -1,23 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useLoading } from '@/lib/store/loading-context'
 
 export default function PageLoader() {
+  const { allReady } = useLoading()
   const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
-    const pageReady = new Promise<void>(resolve => {
-      if (document.readyState === 'complete') {
-        resolve()
-      } else {
-        window.addEventListener('load', () => resolve(), { once: true })
-      }
-    })
+    if (!allReady) return
 
-    pageReady.then(() => {
-      setHidden(true)
-    })
-  }, [])
+    const timeout = setTimeout(() => setHidden(true), 150)
+    return () => clearTimeout(timeout)
+  }, [allReady])
 
   return (
     <div className="page-loader" aria-hidden={hidden} style={{ opacity: hidden ? 0 : 1, visibility: hidden ? 'hidden' : 'visible', pointerEvents: hidden ? 'none' : 'auto' }}>

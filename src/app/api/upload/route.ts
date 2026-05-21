@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { authenticate } from '@/lib/auth-guard'
 
 export async function POST(request: NextRequest) {
@@ -24,10 +24,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'La imagen no puede superar los 5MB' }, { status: 400 })
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const { supabase } = createClient(request)
 
     const ext = file.name.split('.').pop() || 'jpg'
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
@@ -47,11 +44,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Error al subir: ${uploadError.message}` }, { status: 500 })
     }
 
-    const { data: publicUrl } = supabase.storage
+    const { data: signedUrl, error: signedUrlError } = await supabase.storage
       .from(bucket)
-      .getPublicUrl(fileName)
+      .createSignedUrl(fileName, 31536000)
 
-    return NextResponse.json({ url: publicUrl.publicUrl })
+    if (signedUrlError || !signedUrl) {
+      console.error('Signed URL error:', signedUrlError)
+      return NextResponse.json({ error: 'Error al generar la URL de la imagen' }, { status: 500 })
+    }
+
+    return NextResponse.json({ url: signedUrl.signedUrl })
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json({ error: 'Error al procesar la subida' }, { status: 500 })

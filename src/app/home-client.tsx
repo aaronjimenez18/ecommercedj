@@ -14,6 +14,7 @@ import Footer from '@/components/layout/footer'
 import WhatsAppFloat from '@/components/layout/whats-app-float'
 import Overlay from '@/components/ui/overlay'
 import PageLoader from '@/components/ui/page-loader'
+import { LoadingProvider } from '@/lib/store/loading-context'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
@@ -49,10 +50,10 @@ export default function HomeClient() {
     gsap.set(".header-wrap", { y: -20 })
 
     const lenis = new Lenis({
-      lerp: 0.08,
+      lerp: 0.12,
       smoothWheel: true,
-      syncTouch: true,
-      syncTouchLerp: 0.075,
+      syncTouch: false,
+      wheelMultiplier: 1.2,
     })
 
     lenis.on('scroll', ScrollTrigger.update)
@@ -60,8 +61,6 @@ export default function HomeClient() {
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000)
     })
-
-    gsap.ticker.lagSmoothing(0)
 
     const onScrollRefresh = () => lenis.resize()
     ScrollTrigger.addEventListener('refresh', onScrollRefresh)
@@ -111,7 +110,7 @@ export default function HomeClient() {
   }, { scope: pageRef, dependencies: [] })
 
   return (
-    <>
+    <LoadingProvider>
       <PageLoader />
 
       <Overlay open={cartOpen || bookingOpen} onClose={closeAll} />
@@ -150,6 +149,6 @@ export default function HomeClient() {
       </div>
 
       <WhatsAppFloat />
-    </>
+    </LoadingProvider>
   )
 }
