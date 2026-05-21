@@ -2,11 +2,24 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export function createClient(request: NextRequest) {
-  const cookiesToApply: Array<{
+  type CookieOptions = {
     name: string
     value: string
-    options: { path?: string; maxAge?: number; secure?: boolean; httpOnly?: boolean; sameSite?: 'lax' | 'strict' | 'none' }
-  }> = []
+    options: {
+      path?: string
+      maxAge?: number
+      secure?: boolean
+      httpOnly?: boolean
+      sameSite?: boolean | 'lax' | 'strict' | 'none'
+      domain?: string
+      encode?: (val: string) => string
+      expires?: Date
+      priority?: 'low' | 'medium' | 'high'
+      partitioned?: boolean
+    }
+  }
+
+  const cookiesToApply: Array<CookieOptions> = []
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
