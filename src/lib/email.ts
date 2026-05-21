@@ -1,8 +1,12 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY || '')
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY || '')
+}
 
-const FROM = process.env.FROM_EMAIL || ''
+function getFrom() {
+  return process.env.FROM_EMAIL || ''
+}
 
 function escapeHtml(text: string) {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -33,8 +37,8 @@ export async function sendOrderConfirmation({
   shipping: number
 }) {
   try {
-    await resend.emails.send({
-      from: FROM,
+    await getResend().emails.send({
+      from: getFrom(),
       to: email,
       subject: 'Confirmación de compra — GDL',
       html: `
@@ -97,8 +101,8 @@ export async function sendOrderStatusUpdate({
           : `Actualización de tu pedido #${orderId} — GDL`
 
   try {
-    await resend.emails.send({
-      from: FROM,
+    await getResend().emails.send({
+      from: getFrom(),
       to: email,
       subject,
       html: `
