@@ -8,7 +8,7 @@ const SECTION_IDS = ['inicio', 'muebles', 'servicios', 'blog', 'testimonios', 'f
 export function useAudioAmbient() {
   const ambient = useRef<AudioAmbient | null>(null)
   const initFired = useRef(false)
-  const rafId = useRef(0)
+  const ticking = useRef(false)
 
   useEffect(() => {
     ambient.current = new AudioAmbient()
@@ -45,24 +45,26 @@ export function useAudioAmbient() {
     })
 
     const onScroll = () => {
-      const max = Math.max(
-        document.body.scrollHeight - window.innerHeight,
-        1
-      )
-      const progress = Math.min(window.scrollY / max, 1)
-      ambient.current?.setProgress(progress)
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          const max = Math.max(
+            document.body.scrollHeight - window.innerHeight,
+            1
+          )
+          const progress = Math.min(window.scrollY / max, 1)
+          ambient.current?.setProgress(progress)
+          ticking.current = false
+        })
+        ticking.current = true
+      }
     }
 
-    const tick = () => {
-      onScroll()
-      rafId.current = requestAnimationFrame(tick)
-    }
-    rafId.current = requestAnimationFrame(tick)
+    window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       ambient.current?.stop()
       observer.disconnect()
-      cancelAnimationFrame(rafId.current)
+      window.removeEventListener('scroll', onScroll)
       document.removeEventListener('click', onUserGesture)
       document.removeEventListener('touchstart', onUserGesture)
       document.removeEventListener('keydown', onUserGesture)

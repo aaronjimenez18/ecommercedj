@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { authenticate } from '@/lib/auth-guard'
+import { rateLimit } from '@/lib/rate-limit'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   const bookings = await prisma.booking.findMany({
     orderBy: { createdAt: 'desc' },
   })
@@ -9,6 +15,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const { allowed, errorResponse } = rateLimit(`booking:${ip}`, { max: 5, windowMs: 60 * 60 * 1000 })
+  if (!allowed) return errorResponse
+
   try {
     const body = await request.json()
 
@@ -37,7 +47,6 @@ export async function POST(request: Request) {
     return NextResponse.json(booking, { status: 201 })
   } catch (e) {
     console.error('Booking creation error:', e)
-    const message = e instanceof Error ? e.message : 'Error desconocido'
-    return NextResponse.json({ error: message }, { status: 400 })
+    return NextResponse.json({ error: 'Error al crear la reserva' }, { status: 400 })
   }
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -115,7 +116,7 @@ export default function Blog() {
             <article key={p.id} className="blog-card">
               {p.image && (
                 <div className="blog-img">
-                  <img loading="lazy" decoding="async" src={p.image} alt={p.title} />
+                  <Image loading="lazy" decoding="async" src={p.image} alt={p.title} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
                 </div>
               )}
               <div className="blog-content">

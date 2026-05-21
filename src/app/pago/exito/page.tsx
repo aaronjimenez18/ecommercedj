@@ -4,11 +4,18 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 import { CartProvider, useCart } from '@/lib/store/cart-context'
 
+declare function gtag(command: string, action: string, params?: Record<string, unknown>): void
+
 function ExitoContent() {
   const { clearCart } = useCart()
 
   useEffect(() => {
     clearCart()
+    gtag('event', 'purchase', {
+      transaction_id: new URLSearchParams(window.location.search).get('session_id'),
+      currency: 'MXN',
+      value: 0,
+    })
   }, [clearCart])
 
   return (

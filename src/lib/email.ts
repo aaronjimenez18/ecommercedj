@@ -1,15 +1,19 @@
-import sgMail from '@sendgrid/mail'
+import { Resend } from 'resend'
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
+const resend = new Resend(process.env.RESEND_API_KEY || '')
 
 const FROM = process.env.FROM_EMAIL || ''
+
+function escapeHtml(text: string) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
 
 function itemsHtml(items: { name: string; price: number; quantity: number }[]) {
   return items
     .map(
       (i) => `
         <tr>
-          <td style="padding:8px 0;border-bottom:1px solid #eee">${i.name}</td>
+          <td style="padding:8px 0;border-bottom:1px solid #eee">${escapeHtml(i.name)}</td>
           <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:center">${i.quantity}</td>
           <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right">$${i.price.toLocaleString()}.00</td>
         </tr>`
@@ -29,7 +33,7 @@ export async function sendOrderConfirmation({
   shipping: number
 }) {
   try {
-    await sgMail.send({
+    await resend.emails.send({
       from: FROM,
       to: email,
       subject: 'Confirmación de compra — GDL',
@@ -93,7 +97,7 @@ export async function sendOrderStatusUpdate({
           : `Actualización de tu pedido #${orderId} — GDL`
 
   try {
-    await sgMail.send({
+    await resend.emails.send({
       from: FROM,
       to: email,
       subject,

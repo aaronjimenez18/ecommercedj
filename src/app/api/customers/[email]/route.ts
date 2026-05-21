@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { authenticate } from '@/lib/auth-guard'
 
 export async function GET(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ email: string }> }
 ) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   const { email } = await params
   const decodedEmail = decodeURIComponent(email)
 

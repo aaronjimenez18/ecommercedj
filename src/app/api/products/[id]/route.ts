@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { getProduct, updateProduct, deleteProduct } from '@/lib/db/products'
+import { authenticate } from '@/lib/auth-guard'
 
 export async function GET(
   _request: Request,
@@ -14,9 +16,12 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   const { id } = await params
   const body = await request.json()
   const product = await updateProduct(id, body)
@@ -27,9 +32,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   const { id } = await params
   const deleted = await deleteProduct(id)
   if (!deleted) {

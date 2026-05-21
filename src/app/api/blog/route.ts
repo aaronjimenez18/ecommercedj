@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { authenticate } from '@/lib/auth-guard'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const slug = searchParams.get('slug')
 
@@ -19,7 +21,10 @@ export async function GET(request: Request) {
   return NextResponse.json(posts)
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   try {
     const body = await request.json()
     const post = await prisma.blogPost.create({

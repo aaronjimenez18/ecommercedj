@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { authenticate } from '@/lib/auth-guard'
 
 export async function GET(
   _request: Request,
@@ -12,9 +14,12 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   const { id } = await params
   try {
     const body = await request.json()
@@ -35,9 +40,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   const { id } = await params
   try {
     await prisma.service.delete({ where: { id: Number(id) } })

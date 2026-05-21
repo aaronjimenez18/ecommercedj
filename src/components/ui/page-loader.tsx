@@ -6,9 +6,6 @@ export default function PageLoader() {
   const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
-    const minDisplay = new Promise<void>(resolve =>
-      setTimeout(resolve, 800)
-    )
     const pageReady = new Promise<void>(resolve => {
       if (document.readyState === 'complete') {
         resolve()
@@ -17,7 +14,7 @@ export default function PageLoader() {
       }
     })
 
-    Promise.all([minDisplay, pageReady]).then(() => {
+    pageReady.then(() => {
       setHidden(true)
     })
   }, [])

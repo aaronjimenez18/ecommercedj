@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { authenticate } from '@/lib/auth-guard'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null

@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { sendOrderStatusUpdate } from '@/lib/email'
+import { authenticate } from '@/lib/auth-guard'
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { errorResponse } = await authenticate(request)
+  if (errorResponse) return errorResponse
+
   const { id } = await params
   try {
     const body = await request.json()

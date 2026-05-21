@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -131,7 +132,7 @@ export default function CatalogSection({ onCartOpen }: { onCartOpen: () => void 
           >
             {product.tag && <span className="tag">{product.tag}</span>}
             <div className="product-img">
-              <img src={product.img} alt={product.name} />
+              <Image src={product.img} alt={product.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
               {product.stock !== undefined && (
                 <span style={{
                   position: 'absolute', bottom: '8px', left: '8px',
