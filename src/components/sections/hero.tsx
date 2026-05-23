@@ -1,11 +1,11 @@
-"use client"
-import { useRef, useState, useCallback } from "react"
-import dynamic from "next/dynamic"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { useGSAP } from "@gsap/react"
+"use client";
+import { useRef, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 const DJPult3D = dynamic(() => import("@/components/dj-pult"), {
   ssr: false,
@@ -18,40 +18,32 @@ const DJPult3D = dynamic(() => import("@/components/dj-pult"), {
       }}
     />
   ),
-})
+});
 
-export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => void }) {
-  const sectionRef = useRef<HTMLElement>(null)
-  const modelAnimRef = useRef<HTMLDivElement>(null)
-  const modelParallaxRef = useRef<HTMLDivElement>(null)
-  const spinRef = useRef(0)
-  const [modelReady, setModelReady] = useState(false)
-  const [introDone, setIntroDone] = useState(false)
+export default function Hero({
+  onIntroTextReady,
+}: {
+  onIntroTextReady?: () => void;
+}) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const modelAnimRef = useRef<HTMLDivElement>(null);
+  const modelParallaxRef = useRef<HTMLDivElement>(null);
+  const spinRef = useRef(0);
+  const [modelReady, setModelReady] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
 
-  const handleModelReady = useCallback(() => setModelReady(true), [])
+  const handleModelReady = useCallback(() => setModelReady(true), []);
 
-  useGSAP(() => {
-    if (!modelReady) return
+  useGSAP(
+    () => {
+      if (!modelReady) return;
 
-    gsap.set(modelAnimRef.current, { scale: 0.8, opacity: 1, rotation: 10 })
-    gsap.set(".hero-kicker, .hero-line, .hero-desc", { y: 16, autoAlpha: 0 })
-    gsap.set(".hero-scroll-hint", { autoAlpha: 0, y: 8 })
+      gsap.set(modelAnimRef.current, { scale: 0.8, opacity: 1, rotation: 10 });
+      gsap.set(".hero-kicker, .hero-line, .hero-desc", { y: 16, autoAlpha: 0 });
+      gsap.set(".hero-scroll-hint", { autoAlpha: 0, y: 8 });
 
-    gsap.to(spinRef, {
-      current: Math.PI * 2,
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1,
-      },
-    })
-
-    gsap.fromTo(modelAnimRef.current,
-      { opacity: 1 },
-      {
-        opacity: 0.15,
+      gsap.to(spinRef, {
+        current: Math.PI * 2,
         ease: "none",
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -59,88 +51,132 @@ export default function Hero({ onIntroTextReady }: { onIntroTextReady?: () => vo
           end: "bottom top",
           scrub: 1,
         },
+      });
+
+      gsap.fromTo(
+        modelAnimRef.current,
+        { opacity: 1 },
+        {
+          opacity: 0.15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        },
+      );
+
+      gsap.fromTo(
+        ".hero-kicker, .hero-line, .hero-desc, .hero-scroll-hint",
+        { opacity: 1 },
+        {
+          opacity: 0.3,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        },
+      );
+
+      if (modelParallaxRef.current) {
+        gsap.to(modelParallaxRef.current, {
+          y: -(window.innerHeight * 0.15),
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
       }
-    )
 
-    gsap.fromTo(".hero-kicker, .hero-line, .hero-desc, .hero-scroll-hint",
-      { opacity: 1 },
-      {
-        opacity: 0.3,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      }
-    )
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    if (modelParallaxRef.current) {
-      gsap.to(modelParallaxRef.current, {
-        y: -(window.innerHeight * 0.15),
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      })
-    }
+      tl.to(modelAnimRef.current, { scale: 1, rotation: 0, duration: 0.6 });
+      tl.to(".hero-kicker", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.2");
+      tl.to(
+        ".hero-line",
+        { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08 },
+        "-=0.15",
+      );
+      tl.to(".hero-desc", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.15");
+      tl.to(
+        ".hero-scroll-hint",
+        { autoAlpha: 1, y: 0, duration: 0.6 },
+        "+=0.3",
+      );
+      tl.call(() => {
+        setIntroDone(true);
+        onIntroTextReady?.();
+      });
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
-
-    tl.to(modelAnimRef.current, { scale: 1, rotation: 0, duration: 0.6 })
-    tl.to(".hero-kicker", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.2")
-    tl.to(".hero-line", { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08 }, "-=0.15")
-    tl.to(".hero-desc", { y: 0, autoAlpha: 1, duration: 0.4 }, "-=0.15")
-    tl.to(".hero-scroll-hint", { autoAlpha: 1, y: 0, duration: 0.6 }, "+=0.3")
-    tl.call(() => {
-      setIntroDone(true)
-      onIntroTextReady?.()
-    })
-
-    requestAnimationFrame(() => ScrollTrigger.refresh())
-  }, { scope: sectionRef, dependencies: [modelReady], revertOnUpdate: true })
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    },
+    { scope: sectionRef, dependencies: [modelReady], revertOnUpdate: true },
+  );
 
   return (
-    <section className="hero" id="inicio"
-      ref={sectionRef}
-    >
+    <section className="hero" id="inicio" ref={sectionRef}>
       <span className="hero-kicker kicker" style={{ opacity: 0 }}>
-        Nightlife &bull; Production &bull; Gear
+        Produccion &bull; Musica &bull; DJ
       </span>
 
       <h1>
-        <span className="hero-line" style={{ opacity: 0 }}>Música que</span><br />
-        <span className="hero-line" style={{ opacity: 0 }}>Se Siente.</span>
+        <span className="hero-line" style={{ opacity: 0 }}>
+          D J
+        </span>
+        <br />
+        <span className="hero-line" style={{ opacity: 0 }}>
+          Gustavo D
+        </span>
       </h1>
 
-      <div
-        ref={modelAnimRef}
-        className="hero-model"
-        style={{ opacity: 0 }}
-      >
+      <div ref={modelAnimRef} className="hero-model" style={{ opacity: 0 }}>
         <div
           ref={modelParallaxRef}
           style={{
-            willChange: 'transform',
+            willChange: "transform",
           }}
         >
           <DJPult3D spinRef={spinRef} onReady={handleModelReady} />
         </div>
       </div>
       <div className="hero-scroll-hint" style={{ opacity: 0 }}>
-        <span style={{ fontSize: 'var(--text-kicker)', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+        <span
+          style={{
+            fontSize: "var(--text-kicker)",
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+          }}
+        >
           DESCUBRE EL CATÁLOGO
         </span>
-        <div style={{ marginTop: 'var(--space-sm)', animation: 'pulse-hint 2s ease-in-out infinite' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="1.5" style={{ display: 'block', margin: '0 auto' }}>
+        <div
+          style={{
+            marginTop: "var(--space-sm)",
+            animation: "pulse-hint 2s ease-in-out infinite",
+          }}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--muted)"
+            strokeWidth="1.5"
+            style={{ display: "block", margin: "0 auto" }}
+          >
             <path d="M12 5v14M5 12l7 7 7-7" />
           </svg>
         </div>
       </div>
     </section>
-  )
+  );
 }
