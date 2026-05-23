@@ -1,8 +1,8 @@
-**!Medidas de Seguridad¡**
+Medidas de Seguridad
 
-Autenticación & Autorización
+Autenticación t Autorización
 
-rotección de APIs
+Protección de APIs
 Todas las rutas administrativas y de mutación requieren una sesión válida de Supabase. Un helper reutilizable `authenticate()` (`src/lib/auth-guard.ts`) verifica la sesión del lado del servidor usando `supabase.auth.getUser()` antes de ejecutar cualquier operación. Esto evita accesos no autorizados independientemente de las protecciones del lado del cliente.
 
 **Rutas protegidas:**
