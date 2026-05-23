@@ -122,24 +122,24 @@ src/
 
 API
 
-| Ruta                          | Métodos                           | Auth | Descripción                  |
-| ----------------------------- | --------------------------------- | ---- | ----------------------------- |
-| `/api/auth/login`             | POST                              | ❌   | Inicio de sesión              |
-| `/api/auth/logout`            | POST                              | ❌   | Cierre de sesión              |
-| `/api/auth/me`                | GET                               | ❌   | Usuario actual                |
-| `/api/products`               | GET, POST                         | ◎   | Listar / Crear producto       |
-| `/api/products/[id]`          | GET, PUT, DELETE                  | ◎   | CRUD de producto              |
-| `/api/orders`                 | GET                               | ✅   | Listar pedidos                |
-| `/api/orders/[id]`            | PUT                               | ✅   | Actualizar pedido             |
-| `/api/orders/stats`           | GET                               | ✅   | Estadísticas de ventas        |
-| `/api/blog`                   | GET, POST                         | ◎   | Listar / Crear artículo       |
-| `/api/blog/[id]`              | GET, PUT, DELETE                  | ◎   | CRUD de artículo              |
-| `/api/services`               | GET, POST                         | ◎   | Listar / Crear servicio       |
-| `/api/services/[id]`          | GET, PUT, DELETE                  | ◎   | CRUD de servicio              |
-| `/api/bookings`               | POST                              | ❌   | Crear reservación             |
-| `/api/customers`              | GET                               | ✅   | Listar clientes               |
-| `/api/customers/[email]`      | GET                               | ✅   | Detalle de cliente            |
-| `/api/upload`                 | POST                              | ✅   | Subir imagen                  |
-| `/api/stripe/checkout`        | POST                              | ❌   | Crear sesión de pago          |
-| `/api/stripe/webhook`         | POST                              | ❌   | Webhook de Stripe             |
+| Ruta                          | Métodos                           | Descripción                  |
+| ----------------------------- | --------------------------------- | ----------------------------- |
+| `/api/auth/login`             | POST                              | Inicio de sesión              |
+| `/api/auth/logout`            | POST                              | Cierre de sesión              |
+| `/api/auth/me`                | GET                               | Usuario actual                |
+| `/api/products`               | GET, POST                         | Listar / Crear producto       |
+| `/api/products/[id]`          | GET, PUT, DELETE                  | CRUD de producto              |
+| `/api/orders`                 | GET                               | Listar pedidos                |
+| `/api/orders/[id]`            | PUT                               | Actualizar pedido             |
+| `/api/orders/stats`           | GET                               | Estadísticas de ventas        |
+| `/api/blog`                   | GET, POST                         | Listar / Crear artículo       |
+| `/api/blog/[id]`              | GET, PUT, DELETE                  | CRUD de artículo              |
+| `/api/services`               | GET, POST                         | Listar / Crear servicio       |
+| `/api/services/[id]`          | GET, PUT, DELETE                  | CRUD de servicio              |
+| `/api/bookings`               | POST                              | Crear reservación             |
+| `/api/customers`              | GET                               | Listar clientes               |
+| `/api/customers/[email]`      | GET                               | Detalle de cliente            |
+| `/api/upload`                 | POST                              | Subir imagen                  |
+| `/api/stripe/checkout`        | POST                              | Crear sesión de pago          |
+| `/api/stripe/webhook`         | POST                              | Webhook de Stripe             |
 
